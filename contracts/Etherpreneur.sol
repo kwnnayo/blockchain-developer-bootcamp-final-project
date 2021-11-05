@@ -37,9 +37,6 @@ contract Etherpreneur {
     function getAllVisions() external view returns (Vision[] memory) {
         return visions;
     }
-    function getAll() external view returns (string memory) {
-        return 'test test';
-    }
 }
 
 /// @title A Contract that depicts a Vision with its info and functions for investments, payments, votes etc
@@ -204,7 +201,8 @@ contract Vision is ReentrancyGuard {
         string memory _description,
         State _currentState,
         uint256 _goal,
-        uint256 _currentAmount
+        uint256 _currentAmount,
+        uint256 _deadline
     ) {
         _owner = owner;
         _type = visionType;
@@ -212,6 +210,7 @@ contract Vision is ReentrancyGuard {
         _description = visionDescr;
         _goal = amountGoal;
         _currentAmount = currentAmount;
+        _deadline = deadline;
     }
 
     //TODO:Revisit
