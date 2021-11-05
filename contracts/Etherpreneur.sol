@@ -37,6 +37,9 @@ contract Etherpreneur {
     function getAllVisions() external view returns (Vision[] memory) {
         return visions;
     }
+    function getAll() external view returns (string memory) {
+        return 'test test';
+    }
 }
 
 /// @title A Contract that depicts a Vision with its info and functions for investments, payments, votes etc
