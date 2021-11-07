@@ -1,5 +1,4 @@
 import Vision from "../../build/contracts/Vision.json";
-import getWeb3 from "../getWeb3";
 
 export const getVisions = async (web3, contract, setVisions) => {
     console.log("mpika me", contract);
