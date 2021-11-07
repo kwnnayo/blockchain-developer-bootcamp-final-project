@@ -19625,12 +19625,12 @@
     "1636280799371": {
       "events": {},
       "links": {},
-      "address": "0x5641f5A6851dB93a85d214e8679818fdc4e18299",
-      "transactionHash": "0x95e6f83f6df09eab24355ce212be6081eae29fbdaee2f3d89dcd819e1d07b883"
+      "address": "0x37b12cDa355E48B0A0c533eAf74a867A4fB635dB",
+      "transactionHash": "0x007c13a2a65d0b6c37eda759281320036b3f14cafc7ae49fc8ef423724b2f05f"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-07T11:45:33.799Z",
+  "updatedAt": "2021-11-07T21:36:12.683Z",
   "networkType": "ethereum",
   "devdoc": {
     "author": "K. Koliopoulou",

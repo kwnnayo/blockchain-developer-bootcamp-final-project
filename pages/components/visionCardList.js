@@ -21,7 +21,7 @@ const VisionCardList = () => {
                     {visions &&
 
                     visions.map((vision, idx) => (
-                        <VisionCard key={`${idx}vis`} data={vision}/>)) // TODO:Update visions in order to rerender
+                        <VisionCard key={`${idx}vis`} data={vision} />)) // TODO:Update visions in order to rerender
                     }
                 </Grid>
             </Container>
