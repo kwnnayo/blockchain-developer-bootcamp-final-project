@@ -8,10 +8,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 /// @author K. Koliopoulou
 /// @notice You can use this contract to construct new Visions
 contract Etherpreneur {
-
+    address public owner = msg.sender;
     Vision[] private visions;
 
-    event newVisionCreated(
+    event NewVisionCreated(
         address _visionAddress,
         address _owner,
         string _type,
@@ -25,7 +25,7 @@ contract Etherpreneur {
 
         visions.push(vision);
 
-        emit newVisionCreated(
+        emit NewVisionCreated(
             address(vision),
             msg.sender,
             visionType,

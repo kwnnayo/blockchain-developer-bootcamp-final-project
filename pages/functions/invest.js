@@ -1,6 +1,5 @@
 import Vision from "../../build/contracts/Vision.json";
 import {toWei} from "./web3Funcs";
-import {getVisions} from "./getVisions";
 import {updateVision} from "./updateVision";
 
 export const invest = async (web3,contract, vision, account, investAmount, setVision) => {
