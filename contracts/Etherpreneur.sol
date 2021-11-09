@@ -67,8 +67,8 @@ contract Vision is ReentrancyGuard {
         bool isDone;
     }
 
-    uint idxReq;
-    mapping(address => mapping(uint => WithdrawReq)) public requests; //TODO:REmove public, only for debugging reasons
+    WithdrawReq[] public requests;
+    uint public idxReq = 0;
 
 
     modifier onlyOwner(){
@@ -125,8 +125,6 @@ contract Vision is ReentrancyGuard {
         if (currentAmount >= amountGoal) {
             state = State.ENDED;
             emit GoalAchieved(owner, currentAmount);
-            makePayment(currentAmount);
-            //TODO: Change it using votes
         }
     }
 
@@ -152,29 +150,25 @@ contract Vision is ReentrancyGuard {
         }
     }
 
-    //TODO: Revisit this section and make it work//
     /// @notice Creates a withdraw request
     /// @param _withdrawAmount the amount to be withdrawn, _receiver the address of the receiver, _withdrawalReason the reason of the withdrawal
-    function createWithdrawRequest(uint _withdrawAmount, address _receiver, string calldata _withdrawalReason) public onlyOwner {
-        require(currentAmount >= _withdrawAmount);
+    function createWithdrawRequest(uint _withdrawAmount, string calldata _withdrawalReason) public onlyOwner goalReached {
+        require(currentAmount >= _withdrawAmount, 'Requested amount is greater than the available one.');
         //TODO:Possible modifier
-        WithdrawReq storage req = requests[msg.sender][idxReq];
-        req.withdrawAmount = _withdrawAmount;
-        req.receiver = _receiver;
-        req.withdrawalReason = _withdrawalReason;
-        req.votes = 0;
-        req.isDone = false;
-
+        WithdrawReq storage newReq = requests.push();
+        newReq.receiver = msg.sender;
+        newReq.withdrawAmount = _withdrawAmount;
+        newReq.withdrawalReason = _withdrawalReason;
+        newReq.votes = 0;
+        newReq.isDone = false;
         idxReq++;
-
     }
 
     /// @notice Vote for a withdrawal request
     /// @param idx the index of the request
     function vote(uint idx) public goalReached isInvestor {
-        WithdrawReq storage withdrawReq = requests[owner][idx];
+        WithdrawReq storage withdrawReq = requests[idx];
         require(withdrawReq.votedInvestors[msg.sender] == false, "User already voted");
-        //check if already has voted
         withdrawReq.votedInvestors[msg.sender] = true;
         withdrawReq.votes++;
     }
@@ -182,9 +176,10 @@ contract Vision is ReentrancyGuard {
     /// @notice Send the amount requested to the receiver
     /// @param idx the index of the request
     function withdraw(uint idx) public onlyOwner payable nonReentrant {
-        WithdrawReq storage req = requests[msg.sender][idx];
-        require(req.isDone == false);
-        require(req.votes >= sumOfInvestors / 2);
+        WithdrawReq storage req = requests[idx];
+        require(req.isDone == false, "Withdrawal already done!");
+        require(req.votes >= sumOfInvestors / 2, "Not enough votes!");
+        currentAmount = currentAmount.sub(req.withdrawAmount);
         (bool success,) = req.receiver.call{value : req.withdrawAmount}("");
         if (success) {
             req.isDone = true;
@@ -202,7 +197,8 @@ contract Vision is ReentrancyGuard {
         State _currentState,
         uint256 _goal,
         uint256 _currentAmount,
-        uint256 _deadline
+        uint256 _deadline,
+        uint _idxReq
     ) {
         _owner = owner;
         _type = visionType;
@@ -211,6 +207,7 @@ contract Vision is ReentrancyGuard {
         _goal = amountGoal;
         _currentAmount = currentAmount;
         _deadline = deadline;
+        _idxReq = idxReq;
     }
 
     //TODO:Revisit
