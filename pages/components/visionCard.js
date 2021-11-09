@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -6,15 +7,16 @@ import Typography from '@mui/material/Typography';
 import {Grid} from "@mui/material";
 import moment from "moment";
 import PropTypes from "prop-types";
-import {useState} from "react";
 import {getState} from "../functions/getState";
 import InvestModal from "./investModal";
 import {toEther} from "../functions/web3Funcs";
+import RequestModal from "./requestModal";
+import VoteModal from "./voteModal";
 
 
 const VisionCard = ({data}) => {
     const [vision, setVision] = useState(data);
-    return(
+    return (
         <Grid item md={3}>
             <Card sx={{minWidth: 275}}>
                 <CardContent>
@@ -36,10 +38,13 @@ const VisionCard = ({data}) => {
                 </CardContent>
                 <CardActions>
                     <InvestModal vision={vision} setVision={setVision}/>
+                    <RequestModal vision={vision} setVision={setVision}/>
+                    <VoteModal vision={vision} setVision={setVision}/>
                 </CardActions>
             </Card>
         </Grid>
-    )}
+    )
+}
 VisionCard.propTypes = {
     data: PropTypes.oneOfType([PropTypes.object])
 }
