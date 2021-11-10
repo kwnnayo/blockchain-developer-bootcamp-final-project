@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -130,29 +130,16 @@ contract Vision is ReentrancyGuard {
 
     /// @notice Add investor
     /// @dev Before adding checks if already investor exists
-    function addInvestor() internal {
+    function addInvestor() private {
         if (investors[msg.sender] == 0) {//TODO:Possible modifier
             sumOfInvestors += 1;
             emit InvestorAdded(msg.sender);
         }
     }
 
-    /// @notice Sends the amount to the owner of the Vision
-    /// @param amount the amount to be sent
-    function makePayment(uint amount) public payable hasEnded goalReached nonReentrant {
-        currentAmount = 0;
-        (bool success,) = owner.call{value : amount}("");
-        if (success) {
-            state = State.PAID;
-            emit WithdrawnSuccess(owner, currentAmount);
-        } else {
-            emit WithdrawnFailure(owner, currentAmount);
-        }
-    }
-
     /// @notice Creates a withdraw request
     /// @param _withdrawAmount the amount to be withdrawn, _receiver the address of the receiver, _withdrawalReason the reason of the withdrawal
-    function createWithdrawRequest(uint _withdrawAmount, string calldata _withdrawalReason) public onlyOwner goalReached {
+    function createWithdrawRequest(uint _withdrawAmount, string calldata _withdrawalReason) public onlyOwner hasEnded {
         require(currentAmount >= _withdrawAmount, 'Requested amount is greater than the available one.');
         //TODO:Possible modifier
         WithdrawReq storage newReq = requests.push();
@@ -175,14 +162,16 @@ contract Vision is ReentrancyGuard {
 
     /// @notice Send the amount requested to the receiver
     /// @param idx the index of the request
-    function withdraw(uint idx) public onlyOwner payable nonReentrant {
+    function withdraw(uint idx) public onlyOwner payable nonReentrant hasEnded {
         WithdrawReq storage req = requests[idx];
         require(req.isDone == false, "Withdrawal already done!");
-        require(req.votes >= sumOfInvestors / 2, "Not enough votes!");
+        require(req.votes >= sumOfInvestors / 2, "Not enough votes!"); //TODO:What happens if 1 investor
         currentAmount = currentAmount.sub(req.withdrawAmount);
+        require(currentAmount>=0,"Not enough amount!!!");
         (bool success,) = req.receiver.call{value : req.withdrawAmount}("");
         if (success) {
             req.isDone = true;
+            if(currentAmount==0) state = State.PAID;
             emit WithdrawnSuccess(req.receiver, req.withdrawAmount);
         } else {
             emit WithdrawnFailure(req.receiver, req.withdrawAmount);
