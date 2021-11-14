@@ -2,6 +2,7 @@
 pragma solidity 0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /// @title A Contract for making Visions
@@ -40,13 +41,15 @@ contract Etherpreneur {
 }
 
 /// @title A Contract that depicts a Vision with its info and functions for investments, payments, votes etc
-contract Vision is ReentrancyGuard {
+contract Vision is ReentrancyGuard, AccessControl {
     using SafeMath for uint;
+    bytes32 public constant INVESTOR_ROLE = keccak256("INVESTOR_ROLE");
 
     enum State {
         INVEST,
         ENDED,
-        PAID
+        PAID,
+        EXPIRED
     }
     uint public amountGoal;
     uint public currentAmount;
@@ -72,17 +75,22 @@ contract Vision is ReentrancyGuard {
 
 
     modifier onlyOwner(){
-        require(msg.sender == owner, "User is not the owner of the Project");
+        require(msg.sender == owner, "User is not the owner of the Vision");
         _;
     }
 
     modifier canInvest(){
-        require(state == State.INVEST && block.timestamp < deadline, "Project is not in Invest State");
+        require(state == State.INVEST && block.timestamp < deadline, "Vision is not in Invest State");
         _;
     }
 
     modifier hasEnded(){
-        require(state == State.ENDED, "Project has not ended yet");
+        require(state == State.ENDED, "Vision has not ended yet");
+        _;
+    }
+
+    modifier hasExpired(){
+        require(state == State.EXPIRED, "Vision has not expired");
         _;
     }
 
@@ -91,8 +99,8 @@ contract Vision is ReentrancyGuard {
         _;
     }
 
-    modifier isInvestor(){
-        require(investors[msg.sender] > 0, "No amount was invested");
+    modifier hasInvestorRole(){
+        require(hasRole(INVESTOR_ROLE, msg.sender), "Does not have investor role");
         _;
     }
 
@@ -103,6 +111,7 @@ contract Vision is ReentrancyGuard {
     event WithdrawnSuccess(address indexed _from, uint _amount);
     event WithdrawnFailure(address indexed _from, uint _amount);
     event GoalAchieved(address indexed owner, uint currentAmount);
+    event VisionExpired(address indexed owner, uint deadline);
 
 
     constructor(address _owner, uint _amountGoal, string memory _type, string memory _descr, uint256 numOfDays) {
@@ -119,20 +128,52 @@ contract Vision is ReentrancyGuard {
     function invest() external canInvest payable {
         require(msg.sender != owner);
         addInvestor();
-        investors[msg.sender] = investors[msg.sender].add(msg.value);
+        allowForPull(msg.sender, msg.value);
         currentAmount = currentAmount.add(msg.value);
         emit AmountReceived(msg.sender, msg.value, currentAmount);
+        checkVisionState();
+    }
+
+    /// @notice Checks if Vision's goal is reached, or Vision is expired
+    function checkVisionState() private {
         if (currentAmount >= amountGoal) {
             state = State.ENDED;
             emit GoalAchieved(owner, currentAmount);
         }
+        if (block.timestamp > deadline) {// TODO: Need to be checked!
+            state = State.EXPIRED;
+            emit VisionExpired(owner, deadline);
+        }
+    }
+
+    /// @notice Adds available amount per investor, pull over push pattern
+    /// @param receiver the investor address, amount the amount could be withdrawn
+    function allowForPull(address receiver, uint amount) private {
+        investors[receiver] = investors[receiver].add(amount);
+    }
+
+    /// @notice Investors can withdraw invested amount if the Vision is expired
+    function withdrawInvestedAmount() public hasInvestorRole hasExpired payable nonReentrant returns (bool){// TODO: Need to be checked.
+        uint amount = investors[msg.sender];
+
+        require(amount != 0);
+        investors[msg.sender] = 0;
+
+        (bool success,) = msg.sender.call{value : amount}("");
+        if (success) {
+            currentAmount = currentAmount.sub(amount);
+        } else {
+            investors[msg.sender] = amount;
+        }
+        return success;
     }
 
     /// @notice Add investor
-    /// @dev Before adding checks if already investor exists
+    /// @dev Before adding, checks if already investor exists
     function addInvestor() private {
         if (investors[msg.sender] == 0) {//TODO:Possible modifier
             sumOfInvestors += 1;
+            _setupRole(INVESTOR_ROLE, msg.sender);
             emit InvestorAdded(msg.sender);
         }
     }
@@ -153,8 +194,9 @@ contract Vision is ReentrancyGuard {
 
     /// @notice Vote for a withdrawal request
     /// @param idx the index of the request
-    function vote(uint idx) public goalReached isInvestor {
+    function vote(uint idx) public hasEnded hasInvestorRole {
         WithdrawReq storage withdrawReq = requests[idx];
+        require(withdrawReq.isDone == false, "Withdrawal already done!");
         require(withdrawReq.votedInvestors[msg.sender] == false, "User already voted");
         withdrawReq.votedInvestors[msg.sender] = true;
         withdrawReq.votes++;
@@ -165,13 +207,13 @@ contract Vision is ReentrancyGuard {
     function withdraw(uint idx) public onlyOwner payable nonReentrant hasEnded {
         WithdrawReq storage req = requests[idx];
         require(req.isDone == false, "Withdrawal already done!");
-        require(req.votes >= sumOfInvestors / 2, "Not enough votes!"); //TODO:What happens if 1 investor
+        require(req.votes >= sumOfInvestors / 2 && !(req.votes != 1 && sumOfInvestors == 1), "Not enough votes!");
         currentAmount = currentAmount.sub(req.withdrawAmount);
-        require(currentAmount>=0,"Not enough amount!!!");
+        require(currentAmount >= 0, "Not enough amount!!!");
         (bool success,) = req.receiver.call{value : req.withdrawAmount}("");
         if (success) {
             req.isDone = true;
-            if(currentAmount==0) state = State.PAID;
+            if (currentAmount == 0) state = State.PAID;
             emit WithdrawnSuccess(req.receiver, req.withdrawAmount);
         } else {
             emit WithdrawnFailure(req.receiver, req.withdrawAmount);
