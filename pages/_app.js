@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import {CacheProvider} from '@emotion/react';
 import {Web3ReactProvider} from '@web3-react/core'
 import Web3 from 'web3'
+import * as React from "react";
 import createEmotionCache from '../styles/createEmotionCache';
 
 // import "../styles/globals.css";
@@ -24,6 +25,7 @@ function getLibrary(provider) {
             <Head>
                 <title>Etherpreneur</title>
                 <meta name="viewport" content="initial-scale=1, width=device-width"/>
+                <link rel="shortcut icon" href="/images/favicon.png" />
             </Head>
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}

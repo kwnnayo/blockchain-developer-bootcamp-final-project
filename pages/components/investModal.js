@@ -31,7 +31,7 @@ const InvestModal = ({vision, setVision}) => {
 
     return (
         <>
-            <Button onClick={handleOpen}>Invest</Button>
+            <Button onClick={handleOpen} disabled={vision._owner === account}>Invest</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}

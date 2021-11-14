@@ -4,11 +4,13 @@ import TextField from "@mui/material/TextField";
 import {useWeb3React} from "@web3-react/core";
 import {Button} from "@mui/material";
 import {useForm} from "react-hook-form";
+import {Grid} from "@material-ui/core";
 import {Web3Context} from "../index";
-import {createVision} from "../functions/createVision";
+import {toWei} from "../functions/web3Funcs";
+import Vision from "../../build/contracts/Vision.json";
 
-const VisionForm = () => {
-    const {contract} = useContext(Web3Context);
+const VisionForm = ({visions, setVisions}) => {
+    const {web3, contract} = useContext(Web3Context);
     const {account} = useWeb3React()
 
     const {
@@ -18,16 +20,32 @@ const VisionForm = () => {
     } = useForm();
     const onSubmit = async (data) => {
         const {title, description, amount, days} = data;
-        await createVision(contract, account, title, description, amount, days)
+        await contract.methods.createVision(title, description, toWei(amount), days).send({
+            from: account
+        }).then((response) => {
+            console.log(response);
+            const visionAddress = response.events.NewVisionCreated.returnValues._visionAddress;
+            const visionContract = new web3.eth.Contract(
+                Vision.abi,
+                visionAddress,
+            );
+            visionContract.methods.getVision().call().then((visionData) => {
+                console.log(visionData);
+                visionData.visionAddress = visionAddress;
+                setVisions([...visions, visionData])
+            });
+
+        });
         reset();
     };
     return (
-        <>
+        <Grid container justify = "center">
             <Box
                 component="form"
                 onSubmit={handleSubmit(onSubmit)}
-                sx={{ '& .MuiTextField-root': {m: 1, width: '25ch'},
-                    pt: "50px"
+                sx={{
+                    '& .MuiTextField-root': {m: 1, width: '25ch'},
+                    pt: "50px",
                 }}
                 noValidation
                 autoComplete="off"
@@ -81,7 +99,7 @@ const VisionForm = () => {
                 </Button>
             </Box>
 
-        </>
+        </Grid>
     )
 }
 

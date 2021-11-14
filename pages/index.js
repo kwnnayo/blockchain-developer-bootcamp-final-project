@@ -3,16 +3,19 @@ import Container from "@mui/material/Container";
 import {useWeb3React} from "@web3-react/core"
 import Web3 from 'web3'
 import {Button} from "@mui/material";
+import Typography from "@mui/material/Typography";
 import {injected} from "./components/Connector"
 import VisionForm from "./components/visionForm";
 import Etherpreneur from "../build/contracts/Etherpreneur.json";
 import VisionCardList from "./components/visionCardList";
+import {getVisions} from "./functions/getVisions";
 
 export const Web3Context = createContext(null);
 const Index = () => {
     const {active, account, library, connector, activate, deactivate} = useWeb3React()
     const [web3, setWeb3] = useState(null);
     const [contract, setContract] = useState(null);
+    const [visions, setVisions] = useState([]);
 
 
     async function connect() {
@@ -54,7 +57,7 @@ const Index = () => {
             const deployedNetwork = Etherpreneur.networks[networkId];
             const instance = new web3.eth.Contract(
                 Etherpreneur.abi,
-                deployedNetwork && deployedNetwork.address,
+                deployedNetwork && deployedNetwork.address, // TODO: Only for localhost
             );
             setContract(instance);
         } catch (error) {
@@ -68,15 +71,30 @@ const Index = () => {
     return (
         <>
             <Web3Context.Provider value={{web3, contract}}>
-                <Container maxWidth="md">
-                    <h1>Etherpreneur</h1>
-                    <h3>Ether donate or not...</h3>
+                <Container disableGutters maxWidth="sm" component="main" sx={{pt: 8, pb: 6}}>
+                    <Typography
+                        align="center"
+                        gutterBottom
+                    >
+                        <img src="/images/logo.png"/>
+                    </Typography>
+                    <Typography variant="h5" align="center" color="text.secondary" component="p">
+                        Where you can ether donate or not...
+                    </Typography>
+                </Container>
+                <Container maxWidth="md" >
                     <Button onClick={() => connect()}>Connect to MetaMask</Button>
                     {active ? <span>Connected with <b>{account}</b></span> : <span>Not connected</span>}
                     <Button onClick={() => disconnect()}>Disconnect</Button>
-                    <VisionForm/>
+                    <VisionForm visions={visions} setVisions={setVisions}/>
                 </Container>
-                <VisionCardList/>
+                <Container maxWidth="md">
+                    <Button onClick={async () => {
+                        await getVisions(web3, contract, setVisions);
+                    }}>Show All Visions
+                    </Button>
+                </Container>
+                <VisionCardList visions={visions}/>
             </Web3Context.Provider>
         </>
     );

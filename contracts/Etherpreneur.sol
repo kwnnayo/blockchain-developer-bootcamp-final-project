@@ -229,6 +229,7 @@ contract Vision is ReentrancyGuard, AccessControl {
         uint256 _goal,
         uint256 _currentAmount,
         uint256 _deadline,
+        uint _sumOfInvestors,
         uint _idxReq
     ) {
         _owner = owner;
@@ -238,6 +239,7 @@ contract Vision is ReentrancyGuard, AccessControl {
         _goal = amountGoal;
         _currentAmount = currentAmount;
         _deadline = deadline;
+        _sumOfInvestors = sumOfInvestors;
         _idxReq = idxReq;
     }
 

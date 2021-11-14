@@ -57,6 +57,8 @@ const VoteModal = ({vision, setVision}) => {
             console.log("ERROR :(", error);
         })
     };
+    
+    const canWithdraw = (req) => req.votes >= vision._sumOfInvestors / 2 && !(req.votes !== 1 && vision._sumOfInvestors === 1)
 
     return (
         <>
@@ -78,15 +80,16 @@ const VoteModal = ({vision, setVision}) => {
                                     Reason: {req.withdrawalReason}
                                 </Typography>
                                 <Typography variant="body2">
-                                    Num of Votes: {req.votes} Status: {req.isDone ? 'Completed' : 'Pending'}
+                                    Num of Votes: {req.votes} Total Investor:{vision._sumOfInvestors} Status: {req.isDone ? 'Completed' : 'Pending'}
                                 </Typography>
                                 <CardActions>
-                                    <Button size="small" disabled={req.isDone} onClick={() => {
+                                    <Button size="small" disabled={req.isDone || vision._owner === account} onClick={() => {
                                         vote(idx)
                                     }}>Vote</Button>
-                                    <Button size="small" disabled={req.isDone} onClick={() => {
-                                        withdraw(idx)
-                                    }}>Withdraw</Button>
+                                    <Button size="small" disabled={req.isDone || vision._owner !== account || !canWithdraw(req)}
+                                            onClick={() => {
+                                                withdraw(idx)
+                                            }}>Withdraw</Button>
                                 </CardActions>
                             </CardContent>
                         ))

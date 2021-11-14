@@ -1,31 +1,28 @@
-import React, {useContext, useState} from "react";
+import React from "react";
 import Container from "@mui/material/Container";
-import {Button, Grid} from "@mui/material";
-import {getVisions} from "../functions/getVisions";
-import {Web3Context} from "../index";
+import PropTypes from "prop-types";
+import {Grid} from "@mui/material";
 import VisionCard from "./visionCard";
 
-const VisionCardList = () => {
-    const {web3, contract} = useContext(Web3Context);
-    const [visions, setVisions] = useState([]);
-    return (
-        <>
-            <Container maxWidth="md">
-                <Button onClick={async () => {
-                    await getVisions(web3, contract, setVisions);
-                }}>Show All Visions
-                </Button>
-            </Container>
-            <Container>
-                <Grid container spacing={24}>
+const VisionCardList = ({visions}) => (
+    <>
+
+        <Container>
+            {visions &&
+            <Container maxWidth="md" component="main">
+                <Grid container spacing={5} alignItems="flex-end">
                     {visions &&
 
                     visions.map((vision, idx) => (
-                        <VisionCard key={`${idx}vis`} data={vision} />)) // TODO:Update visions in order to rerender
+                        <VisionCard key={`${idx}vis`} data={vision}/>))
                     }
+
                 </Grid>
-            </Container>
-        </>
-    )
+            </Container>}
+        </Container>
+    </>
+)
+VisionCardList.propTypes = {
+    visions: PropTypes.oneOfType([PropTypes.object])
 }
 export default VisionCardList;

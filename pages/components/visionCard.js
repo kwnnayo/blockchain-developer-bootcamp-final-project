@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 import {Grid} from "@mui/material";
 import moment from "moment";
 import PropTypes from "prop-types";
+import {useWeb3React} from "@web3-react/core";
+import {CardHeader, Chip} from "@material-ui/core";
 import {getState} from "../functions/getState";
 import InvestModal from "./investModal";
 import {toEther} from "../functions/web3Funcs";
@@ -16,13 +18,23 @@ import VoteModal from "./voteModal";
 
 const VisionCard = ({data}) => {
     const [vision, setVision] = useState(data);
+    const {account} = useWeb3React()
+
     return (
-        <Grid item md={3}>
+        <Grid
+            item
+            key={data._type}
+            xs={12}
+            sm={12}
+            md={4}
+        >
             <Card sx={{minWidth: 275}}>
                 <CardContent>
-                    <Typography variant="h5" component="div">
-                        {vision._type}
-                    </Typography>
+                    <CardHeader
+                        title={vision._type}
+                        titleTypographyProps={{ align: 'center' }}
+                        action={vision._owner === account ? <Chip label="Owned"/> : null}
+                    />
                     <Typography sx={{mb: 1.5}} color="text.secondary">
                         {vision._description}
                     </Typography>

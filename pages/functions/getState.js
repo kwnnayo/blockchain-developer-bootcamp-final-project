@@ -1,6 +1,14 @@
-export const getState = (state) =>
-    state === '0' ?
-        'In Progress'
-        : state === '1'
-            ? 'Goal reached'
-            : 'Goal reached and owner got paid'
+export const getState = (state) => {
+    switch (state) {
+        case '0':
+            return 'In Progress';
+        case '1':
+            return 'Goal reached';
+        case '2':
+            return 'Goal reached and owner got paid';
+        case '3':
+            return 'Expired';
+        default:
+            return '';
+    }
+}

@@ -40,13 +40,14 @@ const RequestModal = ({vision, setVision}) => {
             alert("Failed to make a request");
             console.log("error:(", error)
         });
+
         setOpen(false);
         reset();
     };
 
     return (
         <>
-            <Button onClick={handleOpen}>Request Withdraw</Button>
+            <Button onClick={handleOpen} disabled={vision._owner !== account || vision._currentState !== '1'}>Request Withdraw</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
