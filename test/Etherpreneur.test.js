@@ -59,9 +59,9 @@ contract("Vision", (accounts) => {
     it("should log an AmountReceived event when an invest is made", async () => {
         const result = await visionInstance.invest({from: alice, value: 10});
         const expected = {_from: alice, receivedAmount: 10, currentAmount: 10}
-        const logAccAddr = result.logs[1].args._from;
-        const logReceivedAmnt = result.logs[1].args.receivedAmount.toNumber();
-        const logCurrAmnt = result.logs[1].args.currentAmount.toNumber();
+        const logAccAddr = result.logs[2].args._from;
+        const logReceivedAmnt = result.logs[2].args.receivedAmount.toNumber();
+        const logCurrAmnt = result.logs[2].args.currentAmount.toNumber();
 
         assert.equal(
             expected._from,
@@ -83,7 +83,7 @@ contract("Vision", (accounts) => {
     it("should log an InvestorAdded event when an invest is made", async () => {
         const result = await visionInstance.invest({from: alice, value: 10});
         const expected = {investor: alice}
-        const logInvestor = result.logs[0].args.investor;
+        const logInvestor = result.logs[1].args.investor;
 
         assert.equal(
             expected.investor,
@@ -95,8 +95,8 @@ contract("Vision", (accounts) => {
     it("should log a GoalAchieved event when an invest goal is reached", async () => {
         const result = await visionInstance.invest({from: alice, value: 100});
         const expected = {owner: contractOwner, currentAmount: 100}
-        const logOwner = result.logs[2].args.owner;
-        const logCurrentAmount = result.logs[2].args.currentAmount;
+        const logOwner = result.logs[3].args.owner;
+        const logCurrentAmount = result.logs[3].args.currentAmount;
 
         assert.equal(
             expected.owner,
@@ -146,6 +146,12 @@ contract("Vision", (accounts) => {
             assert(
                 enumState.hasOwnProperty('PAID'),
                 "The enum does not have a `PAID` value"
+            );
+        });
+        it("should define `EXPIRED`", () => {
+            assert(
+                enumState.hasOwnProperty('EXPIRED'),
+                "The enum does not have a `EXPIRED` value"
             );
         });
     });
