@@ -18,6 +18,7 @@ function getLibrary(provider) {
 }
 
  function MyApp(props) {
+     // eslint-disable-next-line react/prop-types
     const {Component, emotionCache = clientSideEmotionCache, pageProps} = props;
 
     return (

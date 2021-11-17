@@ -5,9 +5,10 @@ import {useWeb3React} from "@web3-react/core";
 import {Button} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {Grid} from "@material-ui/core";
-import {Web3Context} from "../index";
+import {Web3Context} from "../pages";
 import {toWei} from "../functions/web3Funcs";
-import Vision from "../../build/contracts/Vision.json";
+import Vision from "../build/contracts/Vision.json";
+import PropTypes from "prop-types";
 
 const VisionForm = ({visions, setVisions}) => {
     const {web3, contract} = useContext(Web3Context);
@@ -102,5 +103,8 @@ const VisionForm = ({visions, setVisions}) => {
         </Grid>
     )
 }
-
+VisionForm.propTypes = {
+    visions: PropTypes.oneOfType([PropTypes.object]),
+    setVisions: PropTypes.func
+}
 export default VisionForm;

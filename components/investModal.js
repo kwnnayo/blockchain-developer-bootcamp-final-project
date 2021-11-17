@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import {invest} from "../functions/invest";
-import {Web3Context} from "../index";
+import {Web3Context} from "../pages";
 
 const InvestModal = ({vision, setVision}) => {
     const {web3, contract} = useContext(Web3Context);

@@ -1,5 +1,4 @@
-import * as React from "react";
-import {useContext} from "react";
+import React, {useContext} from "react";
 import {useWeb3React} from "@web3-react/core";
 import Button from "@mui/material/Button";
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
@@ -7,8 +6,8 @@ import {Box} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import {useForm} from "react-hook-form";
 import PropTypes from "prop-types";
-import Vision from "../../build/contracts/Vision.json";
-import {Web3Context} from "../index";
+import Vision from "../build/contracts/Vision.json";
+import {Web3Context} from "../pages";
 import {toWei} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
 

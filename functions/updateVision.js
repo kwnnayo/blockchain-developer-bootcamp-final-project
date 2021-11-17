@@ -1,4 +1,4 @@
-import Vision from "../../build/contracts/Vision.json";
+import Vision from "../build/contracts/Vision.json";
 
 export const updateVision = (web3, vision, setVision) => {
     const visionContract = new web3.eth.Contract(
@@ -6,7 +6,7 @@ export const updateVision = (web3, vision, setVision) => {
         vision.visionAddress,
     );
     visionContract.methods.getVision().call().then((visionData) => {
-        console.log(visionData);
+        // console.log(visionData);
         visionData.visionAddress = vision.visionAddress;
         setVision(visionData)
     });

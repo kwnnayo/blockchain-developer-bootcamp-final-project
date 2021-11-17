@@ -6,8 +6,8 @@ import {Dialog, DialogTitle} from "@material-ui/core";
 import {Card, CardActions, CardContent, Grid} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import Vision from "../../build/contracts/Vision.json";
-import {Web3Context} from "../index";
+import Vision from "../build/contracts/Vision.json";
+import {Web3Context} from "../pages";
 import {toEther} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
 
@@ -30,8 +30,8 @@ const VoteModal = ({vision, setVision}) => {
     }, [vision]);
 
     const vote = async (idx) => {
-        console.log("exw ta reqs", requests);
-        console.log("preparing for vote for index", idx);
+        // console.log("exw ta reqs", requests);
+        // console.log("preparing for vote for index", idx);
         visionContract.methods.vote(idx).send({from: account}).then((resp) => {
             console.log("Voted!!!!", resp);
             updateVision(web3, vision, setVision);
@@ -44,9 +44,8 @@ const VoteModal = ({vision, setVision}) => {
     };
 
     const withdraw = async (idx) => {
-        console.log("exw ta reqs", requests);
-        console.log("preparing to withdraw for index", idx);
-        console.log("efefwfwe", contract, account);
+        // console.log("exw ta reqs", requests);
+        // console.log("preparing to withdraw for index", idx);
         visionContract.methods.withdraw(idx).send({from: account}).then((resp) => {
             console.log("Withdraw Success!!!!", resp);
             updateVision(web3, vision, setVision);

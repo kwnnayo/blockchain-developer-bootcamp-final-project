@@ -1,4 +1,4 @@
-import Vision from "../../build/contracts/Vision.json";
+import Vision from "../build/contracts/Vision.json";
 import {toWei} from "./web3Funcs";
 import {updateVision} from "./updateVision";
 

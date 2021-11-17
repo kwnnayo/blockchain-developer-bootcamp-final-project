@@ -4,11 +4,13 @@ import {useWeb3React} from "@web3-react/core"
 import Web3 from 'web3'
 import {Button} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {injected} from "./components/Connector"
-import VisionForm from "./components/visionForm";
+import {env} from "../next.config";
+import {injected} from "../functions/Connector"
+import VisionForm from "../components/visionForm";
 import Etherpreneur from "../build/contracts/Etherpreneur.json";
-import VisionCardList from "./components/visionCardList";
-import {getVisions} from "./functions/getVisions";
+import VisionCardList from "../components/visionCardList";
+import {getVisions} from "../functions/getVisions";
+
 
 export const Web3Context = createContext(null);
 const Index = () => {
@@ -53,11 +55,13 @@ const Index = () => {
             }
             // Get the contract instance.
             const networkId = await web3.eth.net.getId();
-            console.log("contr", Etherpreneur.abi);
+            // console.log("contr", Etherpreneur.abi);
             const deployedNetwork = Etherpreneur.networks[networkId];
+            // console.log("exwww", deployedNetwork.address,  env.ETHERPRENEUR_ADDR);
             const instance = new web3.eth.Contract(
                 Etherpreneur.abi,
-                deployedNetwork && deployedNetwork.address, // TODO: Only for localhost
+                // deployedNetwork && deployedNetwork.address, // TODO: Only for localhost
+                env.ETHERPRENEUR_ADDR
             );
             setContract(instance);
         } catch (error) {
