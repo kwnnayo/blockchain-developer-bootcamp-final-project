@@ -23543,8 +23543,22 @@
     "name": "solc",
     "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
   },
+  "networks": {
+    "1637010410189": {
+      "events": {},
+      "links": {},
+      "address": "0xc0CD01c1ecb83950F1056ba5C0CBD62D2d24AB76",
+      "transactionHash": "0x96332ffa3d0e0c629d98f19b2223d2e6fef01d9ba50a23d2e2c409c4f5ce0a85"
+    },
+    "1637407321850": {
+      "events": {},
+      "links": {},
+      "address": "0xbbfB2800FBb018Bb33a5E499eF6760569D7eCa45",
+      "transactionHash": "0xc08b453b734399ef2fe87b068ce54c63b3168bf8ab0a3be75cf26c66dfd2d9b4"
+    }
+  },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-20T15:07:13.616Z",
+  "updatedAt": "2021-11-20T15:53:15.319Z",
   "networkType": "ethereum",
   "devdoc": {
     "author": "K. Koliopoulou",
