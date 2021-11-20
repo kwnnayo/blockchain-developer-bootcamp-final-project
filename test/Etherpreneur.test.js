@@ -111,6 +111,11 @@ contract("Vision", (accounts) => {
         );
     });
 
+    it("should revert if the invested amount exceeds the goal amount", async () => {
+        await visionInstance.invest({from: alice, value: 10})
+        await catchRevert(visionInstance.invest({from: alice, value: 100}));
+    });
+
     it("should revert if the owner tries to invest himself", async () => {
         await catchRevert(visionInstance.invest({from: contractOwner, value: 100}));
     });
