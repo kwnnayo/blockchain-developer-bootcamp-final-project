@@ -109,7 +109,6 @@ contract Vision is ReentrancyGuard, AccessControl {
     event AmountReceived(address indexed _from, uint receivedAmount, uint currentAmount);
     event AmountSent(address indexed _from, uint _amount);
     event WithdrawnSuccess(address indexed _from, uint _amount);
-    event WithdrawnFailure(address indexed _from, uint _amount);
     event GoalAchieved(address indexed owner, uint currentAmount);
     event VisionExpired(address indexed owner, uint deadline);
 
@@ -120,7 +119,6 @@ contract Vision is ReentrancyGuard, AccessControl {
         visionType = _type;
         visionDescr = _descr;
         deadline = block.timestamp + (numOfDays * 1 days);
-        //TODO: revisit this assignment
         emit VisionCreated(_owner, _amountGoal, _type, _descr);
     }
 
@@ -130,6 +128,7 @@ contract Vision is ReentrancyGuard, AccessControl {
         addInvestor();
         allowForPull(msg.sender, msg.value);
         currentAmount = currentAmount.add(msg.value);
+        require(currentAmount <= amountGoal, "Invested amount exceeds requested goal");
         emit AmountReceived(msg.sender, msg.value, currentAmount);
         checkVisionState();
     }
@@ -147,13 +146,14 @@ contract Vision is ReentrancyGuard, AccessControl {
     }
 
     /// @notice Adds available amount per investor, pull over push pattern
-    /// @param receiver the investor address, amount the amount could be withdrawn
+    /// @param receiver the investor address
+    /// @param amount the amount could be withdrawn
     function allowForPull(address receiver, uint amount) private {
         investors[receiver] = investors[receiver].add(amount);
     }
 
     /// @notice Investors can withdraw invested amount if the Vision is expired
-    function withdrawInvestedAmount() public hasInvestorRole hasExpired payable nonReentrant returns (bool){// TODO: Need to be checked.
+    function withdrawInvestedAmount() public hasInvestorRole payable nonReentrant returns (bool){// TODO: Add hasExpired
         uint amount = investors[msg.sender];
 
         require(amount != 0);
@@ -168,6 +168,12 @@ contract Vision is ReentrancyGuard, AccessControl {
         return success;
     }
 
+    /// @notice Returns the amount invested from the given address
+    /// @param investor the investor's address
+    function getInvestorAmount(address investor) public view returns (uint) {
+        return investors[investor];
+    }
+
     /// @notice Add investor
     /// @dev Before adding, checks if already investor exists
     function addInvestor() private {
@@ -179,10 +185,11 @@ contract Vision is ReentrancyGuard, AccessControl {
     }
 
     /// @notice Creates a withdraw request
-    /// @param _withdrawAmount the amount to be withdrawn, _receiver the address of the receiver, _withdrawalReason the reason of the withdrawal
+    /// @param _withdrawAmount the amount to be withdrawn
+    /// @param _withdrawalReason the reason of the withdrawal
+    /// @dev Before adding the new request checks if there is enough amount to request for
     function createWithdrawRequest(uint _withdrawAmount, string calldata _withdrawalReason) public onlyOwner hasEnded {
         require(currentAmount >= _withdrawAmount, 'Requested amount is greater than the available one.');
-        //TODO:Possible modifier
         WithdrawReq storage newReq = requests.push();
         newReq.receiver = msg.sender;
         newReq.withdrawAmount = _withdrawAmount;
@@ -194,6 +201,7 @@ contract Vision is ReentrancyGuard, AccessControl {
 
     /// @notice Vote for a withdrawal request
     /// @param idx the index of the request
+    /// @dev Before adding the vote, checks if the request is already done and if the investor has already voted
     function vote(uint idx) public hasEnded hasInvestorRole {
         WithdrawReq storage withdrawReq = requests[idx];
         require(withdrawReq.isDone == false, "Withdrawal already done!");
@@ -204,6 +212,9 @@ contract Vision is ReentrancyGuard, AccessControl {
 
     /// @notice Send the amount requested to the receiver
     /// @param idx the index of the request
+    /// @dev Before transferring the amount checks if the withdrawal is already done, if the votes are enough and if the
+    /// current amount is enough. The require given for the votes part, handles also the special case of having only
+    /// 1 investor.
     function withdraw(uint idx) public onlyOwner payable nonReentrant hasEnded {
         WithdrawReq storage req = requests[idx];
         require(req.isDone == false, "Withdrawal already done!");
@@ -211,15 +222,13 @@ contract Vision is ReentrancyGuard, AccessControl {
         currentAmount = currentAmount.sub(req.withdrawAmount);
         require(currentAmount >= 0, "Not enough amount!!!");
         (bool success,) = req.receiver.call{value : req.withdrawAmount}("");
-        if (success) {
-            req.isDone = true;
-            if (currentAmount == 0) state = State.PAID;
-            emit WithdrawnSuccess(req.receiver, req.withdrawAmount);
-        } else {
-            emit WithdrawnFailure(req.receiver, req.withdrawAmount);
-        }
+        require(success, "Withdrawn has failed!");
+        req.isDone = true;
+        if (currentAmount == 0) state = State.PAID;
+        emit WithdrawnSuccess(req.receiver, req.withdrawAmount);
     }
-    //////////////
+
+    // @notice Get vision data
     function getVision() public view returns
     (
         address _owner,
@@ -243,7 +252,6 @@ contract Vision is ReentrancyGuard, AccessControl {
         _idxReq = idxReq;
     }
 
-    //TODO:Revisit
     receive() external payable {
         revert();
     }

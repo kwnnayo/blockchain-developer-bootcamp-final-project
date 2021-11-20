@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import {Box} from "@mui/material";
 import {useWeb3React} from "@web3-react/core";
@@ -7,41 +7,58 @@ import {useForm} from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
-import {invest} from "../functions/invest";
 import {Web3Context} from "../pages";
+import Vision from "../build/contracts/Vision.json";
+import {updateVision} from "../functions/updateVision";
+import {toEther} from "../functions/web3Funcs";
 
-const InvestModal = ({vision, setVision}) => {
-    const {web3, contract} = useContext(Web3Context);
+const RefundModal = ({vision, setVision}) => {
+    const {web3} = useContext(Web3Context);
     const {account} = useWeb3React();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const {
-        register,
         handleSubmit,
         reset
     } = useForm();
 
+    const [refundAmount, setRefundAmount] = useState('0');
+    const visionContract = new web3.eth.Contract(
+        Vision.abi,
+        vision.visionAddress,
+    );
+
+    useEffect(()=>{
+        visionContract.methods.getInvestorAmount(account).call().then((amount) => {
+            setRefundAmount(amount);
+        })
+    }, [account]);
+
     const onSubmit = async (data) => {
-        const {investAmount} = data;
-        await invest(web3, contract, vision, account, investAmount, setVision)
+        visionContract.methods.withdrawInvestedAmount().send({from: account}).then((resp) => {
+            console.log("Refund Success!!!", resp);
+            updateVision(web3, vision, setVision);
+            setRefundAmount('0');
+        }).catch((error) => {
+            alert(
+                `Failed to refund.`,
+            );
+            console.log("ERROR in refund :(", error);
+        })
         setOpen(false);
         reset();
     };
 
-    const canInvest = () => {
-        return vision._owner !== account && vision._currentState === '0';
-    }
-
     return (
         <>
-            <Button onClick={handleOpen} disabled={!canInvest()}>Invest</Button>
+            <Button onClick={handleOpen} disabled={vision._owner === account}>Withdraw Invested Amount</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="form-dialog-title"
             >
-                <DialogTitle id="form-dialog-title">Insert amount to invest</DialogTitle>
+                <DialogTitle id="form-dialog-title">Invested amount available for refund</DialogTitle>
                 <Box
                     component="form"
                     onSubmit={handleSubmit(onSubmit)}
@@ -53,12 +70,13 @@ const InvestModal = ({vision, setVision}) => {
                 >
                     <DialogContent>
                         <TextField
-                            {...register("investAmount")}
                             id="standard-number"
-                            label="Invest Amount"
+                            label="Refund Amount"
                             type="number"
-                            name="investAmount"
+                            name="amountToRefund"
                             required
+                            value={toEther(refundAmount)}
+                            disabled={true}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -71,7 +89,7 @@ const InvestModal = ({vision, setVision}) => {
 
                     </DialogContent>
                     <DialogActions>
-                        <Button size="small" type="submit">Invest</Button>
+                        <Button size="small" type="submit">Refund</Button>
                         <Button size="small" color="secondary" onClick={handleClose}>Close</Button>
                     </DialogActions>
                 </Box>
@@ -80,8 +98,8 @@ const InvestModal = ({vision, setVision}) => {
 
     )
 }
-InvestModal.propTypes = {
+RefundModal.propTypes = {
     vision: PropTypes.oneOfType([PropTypes.object]),
     setVision: PropTypes.func
 }
-export default InvestModal;
+export default RefundModal;

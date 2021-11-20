@@ -12,6 +12,7 @@ import {CardHeader, Chip} from "@material-ui/core";
 import {getState} from "../functions/getState";
 import InvestModal from "./investModal";
 import {toEther} from "../functions/web3Funcs";
+import RefundModal from "./refundModal";
 import RequestModal from "./requestModal";
 import VoteModal from "./voteModal";
 
@@ -32,7 +33,7 @@ const VisionCard = ({data}) => {
                 <CardContent>
                     <CardHeader
                         title={vision._type}
-                        titleTypographyProps={{ align: 'center' }}
+                        titleTypographyProps={{align: 'center'}}
                         action={vision._owner === account ? <Chip label="Owned"/> : null}
                     />
                     <Typography sx={{mb: 1.5}} color="text.secondary">
@@ -49,9 +50,13 @@ const VisionCard = ({data}) => {
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    <InvestModal vision={vision} setVision={setVision}/>
-                    <RequestModal vision={vision} setVision={setVision}/>
-                    <VoteModal vision={vision} setVision={setVision}/>
+                    {vision._currentState === '3' ? <RefundModal vision={vision} setVision={setVision}/> :
+                        <>
+                            <InvestModal vision={vision} setVision={setVision}/>
+                            <RequestModal vision={vision} setVision={setVision}/>
+                            <VoteModal vision={vision} setVision={setVision}/>
+                        </>
+                    }
                 </CardActions>
             </Card>
         </Grid>

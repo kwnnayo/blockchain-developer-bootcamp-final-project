@@ -80,6 +80,11 @@ const VisionForm = ({visions, setVisions}) => {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        inputProps={{
+                            maxLength: 13,
+                            step: "0.001",
+                            min:"0.001"
+                        }}
                         variant="standard"
                     />
                     <TextField

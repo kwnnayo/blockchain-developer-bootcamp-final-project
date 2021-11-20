@@ -44,9 +44,13 @@ const RequestModal = ({vision, setVision}) => {
         reset();
     };
 
+    const canRequestWithdraw = () => {
+        return vision._owner === account && vision._currentState === '1' && vision._currentAmount > 0;
+    }
+
     return (
         <>
-            <Button onClick={handleOpen} disabled={vision._owner !== account || vision._currentState !== '1'}>Request Withdraw</Button>
+            <Button onClick={handleOpen} disabled={!canRequestWithdraw()}>Request Withdraw</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -72,6 +76,10 @@ const RequestModal = ({vision, setVision}) => {
                             required
                             InputLabelProps={{
                                 shrink: true,
+                            }}
+                            inputProps={{
+                                maxLength: 13,
+                                step: "0.001"
                             }}
                             variant="standard"
                         />
