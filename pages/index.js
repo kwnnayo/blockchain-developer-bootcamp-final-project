@@ -19,6 +19,7 @@ const Index = () => {
     const [web3, setWeb3] = useState(null);
     const [contract, setContract] = useState(null);
     const [visions, setVisions] = useState([]);
+    const [toggleLogo, setToggleLogo] = useState(false);
 
 
     async function connect() {
@@ -81,23 +82,33 @@ const Index = () => {
                         align="center"
                         gutterBottom
                     >
-                        <img src="/images/logo.png"/>
+                        {toggleLogo ?  <img src="/images/logo3.png"/> : <img src="/images/logo.png"/> }
                     </Typography>
                     <Typography variant="h5" align="center" color="text.secondary" component="p">
                         Where you can ether donate or not...
                     </Typography>
                 </Container>
-                <Container maxWidth="md" >
+                <Container maxWidth="md">
                     <Button onClick={() => connect()}>Connect to MetaMask</Button>
                     {active ? <span>Connected with <b>{account}</b></span> : <span>Not connected</span>}
                     <Button onClick={() => disconnect()}>Disconnect</Button>
                     <VisionForm visions={visions} setVisions={setVisions}/>
                 </Container>
-                <Container maxWidth="md">
-                    <Button onClick={async () => {
-                        await getVisions(web3, contract, setVisions);
-                    }}>Show All Visions
-                    </Button>
+                <Container maxWidth="md" sx={{pb:"20px"}}>
+                    <Box sx={{ display:"flex", justifyContent: "space-evenly"}}>
+                        <Box>
+                            <Button onClick={async () => {
+                                await getVisions(web3, contract, setVisions);
+                            }}>Show All Visions
+                            </Button>
+                        </Box>
+                        <Box>
+                            <Button onClick={ () => {
+                                setToggleLogo(!toggleLogo);
+                            }}>{toggleLogo ? "Hide me the vision" : "Show me The Vision"}
+                            </Button>
+                        </Box>
+                    </Box>
                 </Container>
                 <VisionCardList visions={visions}/>
             </Web3Context.Provider>
