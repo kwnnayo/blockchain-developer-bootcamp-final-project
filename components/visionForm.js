@@ -83,8 +83,9 @@ const VisionForm = ({visions, setVisions}) => {
                         inputProps={{
                             maxLength: 13,
                             step: "0.001",
-                            min:"0.001"
+                            min:"0.001",
                         }}
+                        placeholder={'Ξ'}
                         variant="standard"
                     />
                     <TextField
@@ -101,7 +102,7 @@ const VisionForm = ({visions, setVisions}) => {
                     />
                 </div>
                 <Button type="submit">
-                    Create Vision
+                    Create a Vision
                 </Button>
             </Box>
 

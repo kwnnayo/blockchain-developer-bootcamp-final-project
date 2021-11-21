@@ -48,8 +48,7 @@ contract Vision is ReentrancyGuard, AccessControl {
     enum State {
         INVEST,
         ENDED,
-        PAID,
-        EXPIRED
+        PAID
     }
     uint public amountGoal;
     uint public currentAmount;
@@ -90,7 +89,7 @@ contract Vision is ReentrancyGuard, AccessControl {
     }
 
     modifier hasExpired(){
-        require(state == State.EXPIRED, "Vision has not expired");
+        require(block.timestamp >= deadline, "Vision has not expired");
         _;
     }
 
@@ -110,8 +109,6 @@ contract Vision is ReentrancyGuard, AccessControl {
     event AmountSent(address indexed _from, uint _amount);
     event WithdrawnSuccess(address indexed _from, uint _amount);
     event GoalAchieved(address indexed owner, uint currentAmount);
-    event VisionExpired(address indexed owner, uint deadline);
-
 
     constructor(address _owner, uint _amountGoal, string memory _type, string memory _descr, uint256 numOfDays) {
         owner = _owner;
@@ -133,15 +130,11 @@ contract Vision is ReentrancyGuard, AccessControl {
         checkVisionState();
     }
 
-    /// @notice Checks if Vision's goal is reached, or Vision is expired
+    /// @notice Checks if Vision's goal is reached
     function checkVisionState() private {
         if (currentAmount >= amountGoal) {
             state = State.ENDED;
             emit GoalAchieved(owner, currentAmount);
-        }
-        if (block.timestamp > deadline) {// TODO: Need to be checked!
-            state = State.EXPIRED;
-            emit VisionExpired(owner, deadline);
         }
     }
 

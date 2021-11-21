@@ -6,8 +6,6 @@ export const getState = (state) => {
             return 'Goal reached';
         case '2':
             return 'Goal reached and owner got paid';
-        case '3':
-            return 'Expired';
         default:
             return '';
     }

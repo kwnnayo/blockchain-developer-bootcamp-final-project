@@ -153,11 +153,5 @@ contract("Vision", (accounts) => {
                 "The enum does not have a `PAID` value"
             );
         });
-        it("should define `EXPIRED`", () => {
-            assert(
-                enumState.hasOwnProperty('EXPIRED'),
-                "The enum does not have a `EXPIRED` value"
-            );
-        });
     });
 });

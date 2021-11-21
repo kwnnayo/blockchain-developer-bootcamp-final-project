@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import {Grid} from "@mui/material";
-import moment from "moment";
+import moment, {now} from "moment";
 import PropTypes from "prop-types";
 import {useWeb3React} from "@web3-react/core";
 import {CardHeader, Chip} from "@material-ui/core";
@@ -20,6 +20,10 @@ import VoteModal from "./voteModal";
 const VisionCard = ({data}) => {
     const [vision, setVision] = useState(data);
     const {account} = useWeb3React()
+
+    const hasExpired = () => {
+        return moment.unix(vision._deadline) <= now();
+    }
 
     return (
         <Grid
@@ -40,17 +44,21 @@ const VisionCard = ({data}) => {
                         {vision._description}
                     </Typography>
                     <Typography variant="body2">
-                        Goal: {toEther(vision._goal)} Current Amount: {toEther(vision._currentAmount)}
+                        <b>Goal:</b> {toEther(vision._goal)} Ξ
+
                     </Typography>
                     <Typography variant="body2">
-                        Current state: {getState(vision._currentState)}
+                        <b>Current Amount:</b> {toEther(vision._currentAmount)} Ξ
                     </Typography>
                     <Typography variant="body2">
-                        Active until: {moment.unix(vision._deadline).toString()}
+                        <b>Current state:</b> {hasExpired() ? "Expired" : getState(vision._currentState)}
+                    </Typography>
+                    <Typography variant="body2">
+                        <b>Active until:</b> {moment.unix(vision._deadline).toString()}
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    {vision._currentState === '3' ? <RefundModal vision={vision} setVision={setVision}/> :
+                    {hasExpired() ? <RefundModal vision={vision} setVision={setVision}/> :
                         <>
                             <InvestModal vision={vision} setVision={setVision}/>
                             <RequestModal vision={vision} setVision={setVision}/>
