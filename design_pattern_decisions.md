@@ -1,6 +1,15 @@
 ## Design pattern decisions
 
-<p>Below follows the design patterns used in this project.</p>
+<p>Below are the design patterns used in this project.</p>
+
+### Factory Design Pattern
+
+<p>The factory pattern, in simple words, is having a contract, which is the factory one, that creates other contracts.
+The <b>Etherpreneur contract</b> is such a case. Etherpreneur contract is used for the creation of <b>multiple 
+Vision contracts</b> 
+as well as for retrieving all the created ones.
+</p>
+
 
 ### Checks-Effects-Interaction Pattern
 
@@ -112,7 +121,8 @@ Checks-Effects-Interaction Pattern as seen above.
 
 <hr/>
 
-####References:
+#### References:
+
 <ul>
 <li><b>Blockchain Developer Bootcamp 2021 courses 💙</b></li>
 <li><a>https://fravoll.github.io/solidity-patterns/</a></li>
