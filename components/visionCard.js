@@ -22,7 +22,7 @@ const VisionCard = ({data}) => {
     const {account} = useWeb3React()
 
     const hasExpired = () => {
-        return moment.unix(vision._deadline) <= now();
+        return moment.unix(vision._deadline) <= now() && vision._currentState !== '1';
     }
 
     return (

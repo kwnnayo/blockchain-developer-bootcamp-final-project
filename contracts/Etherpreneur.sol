@@ -89,12 +89,7 @@ contract Vision is ReentrancyGuard, AccessControl {
     }
 
     modifier hasExpired(){
-        require(block.timestamp >= deadline, "Vision has not expired");
-        _;
-    }
-
-    modifier goalReached(){
-        require(currentAmount >= amountGoal, "Goal has not been reached");
+        require(block.timestamp >= deadline && state != State.ENDED, "Vision has not expired");
         _;
     }
 

@@ -38,6 +38,7 @@ const VoteModal = ({vision, setVision}) => {
             addAlert("Voted successfully!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
+            console.log("exw error", error);
             let reasonMessage = getReasonMessage(error);
             console.log("ERROR during voting :(", reasonMessage);
             addAlert(reasonMessage.toString(), 'error');
