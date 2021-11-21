@@ -2,3 +2,4 @@
 .idea/
 .next/
 package-lock.json
+.env
