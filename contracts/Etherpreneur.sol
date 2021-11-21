@@ -153,7 +153,7 @@ contract Vision is ReentrancyGuard, AccessControl {
     }
 
     /// @notice Investors can withdraw invested amount if the Vision is expired
-    function withdrawInvestedAmount() public hasInvestorRole payable nonReentrant returns (bool){// TODO: Add hasExpired
+    function withdrawInvestedAmount() public hasInvestorRole hasExpired payable nonReentrant returns (bool){// TODO: Add
         uint amount = investors[msg.sender];
 
         require(amount != 0);
