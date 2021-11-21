@@ -6,12 +6,12 @@ import {Box} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import {useForm} from "react-hook-form";
 import PropTypes from "prop-types";
-import Vision from "../build/contracts/Vision.json";
 import {Web3Context} from "../pages";
 import {toWei} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
 import {getReasonMessage} from "../functions/getReasonMessage";
 import useAlert from "../hooks/useAlert";
+import useVisionContract from "../hooks/useVisionContract";
 
 const RequestModal = ({vision, setVision}) => {
     const {web3} = useContext(Web3Context);
@@ -30,10 +30,8 @@ const RequestModal = ({vision, setVision}) => {
     const onSubmit = async (data) => {
         const {withdrawAmount} = data;
         const {withdrawReason} = data;
-        const visionContract = new web3.eth.Contract(
-            Vision.abi,
-            vision.visionAddress,
-        );
+        const visionContract = useVisionContract(vision.visionAddress, web3);
+
         await visionContract.methods.createWithdrawRequest(toWei(withdrawAmount), withdrawReason).send({from: account}).then((resp) => {
             console.log("Made a request!!", resp);
             addAlert("Withdraw request submitted successfully!", 'success');

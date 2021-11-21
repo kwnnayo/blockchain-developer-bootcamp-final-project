@@ -6,12 +6,12 @@ import {Dialog, DialogTitle} from "@material-ui/core";
 import {Card, CardActions, CardContent, Grid} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import Vision from "../build/contracts/Vision.json";
 import {Web3Context} from "../pages";
 import {toEther} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
 import useAlert from "../hooks/useAlert";
 import {getReasonMessage} from "../functions/getReasonMessage";
+import useVisionContract from "../hooks/useVisionContract";
 
 const VoteModal = ({vision, setVision}) => {
     const {web3, contract} = useContext(Web3Context);
@@ -21,10 +21,8 @@ const VoteModal = ({vision, setVision}) => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const visionContract = new web3.eth.Contract(
-        Vision.abi,
-        vision.visionAddress,
-    );
+    const visionContract = useVisionContract(vision.visionAddress, web3);
+
     useEffect(async () => {
         const withdrawReqs = await Promise.all(
             Array(parseInt(vision._idxReq)).fill().map((r, idx) => visionContract.methods.requests(idx).call()));

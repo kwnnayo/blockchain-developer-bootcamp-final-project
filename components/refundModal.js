@@ -8,11 +8,11 @@ import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import {Web3Context} from "../pages";
-import Vision from "../build/contracts/Vision.json";
 import {updateVision} from "../functions/updateVision";
 import {toEther} from "../functions/web3Funcs";
 import {getReasonMessage} from "../functions/getReasonMessage";
 import useAlert from "../hooks/useAlert";
+import useVisionContract from "../hooks/useVisionContract";
 
 const RefundModal = ({vision, setVision}) => {
     const {web3} = useContext(Web3Context);
@@ -27,10 +27,7 @@ const RefundModal = ({vision, setVision}) => {
     } = useForm();
 
     const [refundAmount, setRefundAmount] = useState('0');
-    const visionContract = new web3.eth.Contract(
-        Vision.abi,
-        vision.visionAddress,
-    );
+    const visionContract = useVisionContract(vision.visionAddress, web3);
 
     useEffect(()=>{
         visionContract.methods.getInvestorAmount(account).call().then((amount) => {

@@ -7,10 +7,10 @@ import {useForm} from "react-hook-form";
 import {Grid} from "@material-ui/core";
 import {Web3Context} from "../pages";
 import {toWei} from "../functions/web3Funcs";
-import Vision from "../build/contracts/Vision.json";
 import PropTypes from "prop-types";
 import useAlert from "../hooks/useAlert";
 import {getReasonMessage} from "../functions/getReasonMessage";
+import useVisionContract from "../hooks/useVisionContract";
 
 const VisionForm = ({visions, setVisions}) => {
     const {web3, contract} = useContext(Web3Context);
@@ -29,10 +29,8 @@ const VisionForm = ({visions, setVisions}) => {
         }).then((response) => {
             // console.log(response);
             const visionAddress = response.events.NewVisionCreated.returnValues._visionAddress;
-            const visionContract = new web3.eth.Contract(
-                Vision.abi,
-                visionAddress,
-            );
+            const visionContract = useVisionContract(visionAddress, web3);
+
             visionContract.methods.getVision().call().then((visionData) => {
                 // console.log(visionData);
                 visionData.visionAddress = visionAddress;
@@ -47,7 +45,7 @@ const VisionForm = ({visions, setVisions}) => {
         reset();
     };
     return (
-        <Grid container justify = "center">
+        <Grid container justify="center">
             <Box
                 component="form"
                 onSubmit={handleSubmit(onSubmit)}
@@ -90,7 +88,7 @@ const VisionForm = ({visions, setVisions}) => {
                         inputProps={{
                             maxLength: 13,
                             step: "0.001",
-                            min:"0.001",
+                            min: "0.001",
                         }}
                         placeholder={'Ξ'}
                         variant="standard"

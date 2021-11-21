@@ -23,6 +23,7 @@ const Index = () => {
     const [contract, setContract] = useState(null);
     const [visions, setVisions] = useState([]);
     const [toggleLogo, setToggleLogo] = useState(false);
+    const [showVisions, setShowVisions] = useState(false);
 
 
     async function connect() {
@@ -69,52 +70,65 @@ const Index = () => {
                 env.ETHERPRENEUR_ADDR
             );
             setContract(instance);
+
         } catch (error) {
             // Catch any errors for any of the above operations.
             addAlert(`Failed to load web3, accounts, or contract. Please check your account and refresh.`, 'error');
         }
     }, [web3]);
 
+    useEffect(async () => {
+        contract !== null && await getVisions(web3, contract, setVisions);
+    }, [contract]);
+
     return (
         <>
             <Web3Context.Provider value={{web3, contract}}>
-                    <Container disableGutters maxWidth="sm" component="main" sx={{pt: 8, pb: 6}}>
-                        <Typography
-                            align="center"
-                            gutterBottom
-                        >
-                            {toggleLogo ? <img src="/images/logo3.png"/> : <img src="/images/logo.png"/>}
-                        </Typography>
-                        <Typography variant="h5" align="center" color="text.secondary" component="p">
-                            Where you can ether donate or not...
-                        </Typography>
-                    </Container>
-                    <Container maxWidth="md">
-                        <Button onClick={() => connect()}>Connect to MetaMask</Button>
-                        {active ? <span>Connected with <b>{account}</b></span> : <span>Not connected</span>}
-                        <Button onClick={() => disconnect()}>Disconnect</Button>
-                        <VisionForm visions={visions} setVisions={setVisions}/>
-                    </Container>
-                    <Container disableGutters maxWidth="md" sx={{pb: "20px"}}>
-                        <Box sx={{display: "flex", justifyContent: "space-evenly"}}>
-                            <Box>
+                <Container disableGutters maxWidth="sm" component="main" sx={{pt: 8, pb: 6}}>
+                    <Typography
+                        align="center"
+                        gutterBottom
+                    >
+                        {toggleLogo ? <img src="/images/logo3.png"/> : <img src="/images/logo.png"/>}
+                    </Typography>
+                    <Typography variant="h5" align="center" color="text.secondary" component="p">
+                        Where you can ether donate or not...
+                    </Typography>
+                </Container>
+                <Container maxWidth="md">
+                    <Button onClick={() => connect()}>Connect to MetaMask</Button>
+                    {active ? <span>Connected with <b>{account}</b></span> : <span>Not connected</span>}
+                    <Button onClick={() => disconnect()}>Disconnect</Button>
+                    <VisionForm visions={visions} setVisions={setVisions}/>
+                </Container>
+                <Container disableGutters maxWidth="md" sx={{pb: "20px"}}>
+                    <Box sx={{display: "flex", justifyContent: "space-evenly"}}>
+                        {!showVisions ? <Box>
                                 <Button onClick={async () => {
                                     await getVisions(web3, contract, setVisions);
+                                    setShowVisions(!showVisions);
                                 }}>Show All Visions
                                 </Button>
-                            </Box>
+                            </Box> :
                             <Box>
-                                <Button onClick={() => {
-                                    setToggleLogo(!toggleLogo);
-                                }}>{toggleLogo ? "Hide me the vision" : "Show me The Vision"}
+                                <Button onClick={async () => {
+                                    setShowVisions(!showVisions);
+                                }}>Hide Visions
                                 </Button>
                             </Box>
+                        }
+                        <Box>
+                            <Button onClick={() => {
+                                setToggleLogo(!toggleLogo);
+                            }}>{toggleLogo ? "Hide me the vision" : "Show me The Vision"}
+                            </Button>
                         </Box>
-                    </Container>
-                    <VisionCardList visions={visions}/>
-                    <Box sx={{display:"flex",position:"relative", justifyContent:"flex-start"}}>
-                            <AlertComponent />
                     </Box>
+                </Container>
+                {showVisions && <VisionCardList visions={visions}/>}
+                <Box sx={{display: "flex", position: "relative", justifyContent: "flex-start"}}>
+                    <AlertComponent/>
+                </Box>
 
             </Web3Context.Provider>
         </>
