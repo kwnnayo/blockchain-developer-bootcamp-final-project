@@ -73,12 +73,12 @@ const Index = () => {
 
         } catch (error) {
             // Catch any errors for any of the above operations.
-            addAlert(`Failed to load web3, accounts, or contract. Please check your account and refresh.`, 'error');
+            addAlert(`Failed to load web3, accounts, or contract. Please check your Metamask account and refresh.`, 'error');
         }
     }, [web3]);
 
     useEffect(async () => {
-        contract !== null && await getVisions(web3, contract, setVisions);
+        contract !== null && await getVisions(web3, contract, setVisions, addAlert);
     }, [contract]);
 
     return (
@@ -105,7 +105,7 @@ const Index = () => {
                     <Box sx={{display: "flex", justifyContent: "space-evenly"}}>
                         {!showVisions ? <Box>
                                 <Button onClick={async () => {
-                                    await getVisions(web3, contract, setVisions);
+                                    await getVisions(web3, contract, setVisions, addAlert);
                                     setShowVisions(!showVisions);
                                 }}>Show All Visions
                                 </Button>
