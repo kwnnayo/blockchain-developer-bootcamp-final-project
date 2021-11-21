@@ -11,11 +11,14 @@ import {Web3Context} from "../pages";
 import Vision from "../build/contracts/Vision.json";
 import {updateVision} from "../functions/updateVision";
 import {toEther} from "../functions/web3Funcs";
+import {getReasonMessage} from "../functions/getReasonMessage";
+import useAlert from "../hooks/useAlert";
 
 const RefundModal = ({vision, setVision}) => {
     const {web3} = useContext(Web3Context);
     const {account} = useWeb3React();
     const [open, setOpen] = React.useState(false);
+    const {addAlert} = useAlert();
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const {
@@ -40,11 +43,11 @@ const RefundModal = ({vision, setVision}) => {
             console.log("Refund Success!!!", resp);
             updateVision(web3, vision, setVision);
             setRefundAmount('0');
+            addAlert("You have been successfully refunded!", 'success');
         }).catch((error) => {
-            alert(
-                `Failed to refund.`,
-            );
-            console.log("ERROR in refund :(", error);
+            let reasonMessage = getReasonMessage(error);
+            console.log("ERROR in refund :(", reasonMessage);
+            addAlert(reasonMessage.toString(), 'error');
         })
         setOpen(false);
         reset();

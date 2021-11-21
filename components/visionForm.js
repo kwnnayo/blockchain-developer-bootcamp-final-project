@@ -9,10 +9,13 @@ import {Web3Context} from "../pages";
 import {toWei} from "../functions/web3Funcs";
 import Vision from "../build/contracts/Vision.json";
 import PropTypes from "prop-types";
+import useAlert from "../hooks/useAlert";
+import {getReasonMessage} from "../functions/getReasonMessage";
 
 const VisionForm = ({visions, setVisions}) => {
     const {web3, contract} = useContext(Web3Context);
-    const {account} = useWeb3React()
+    const {account} = useWeb3React();
+    const {addAlert} = useAlert();
 
     const {
         register,
@@ -24,19 +27,23 @@ const VisionForm = ({visions, setVisions}) => {
         await contract.methods.createVision(title, description, toWei(amount), days).send({
             from: account
         }).then((response) => {
-            console.log(response);
+            // console.log(response);
             const visionAddress = response.events.NewVisionCreated.returnValues._visionAddress;
             const visionContract = new web3.eth.Contract(
                 Vision.abi,
                 visionAddress,
             );
             visionContract.methods.getVision().call().then((visionData) => {
-                console.log(visionData);
+                // console.log(visionData);
                 visionData.visionAddress = visionAddress;
                 setVisions([...visions, visionData])
             });
-
-        });
+            addAlert("Vision created successfully!", 'success');
+        }).catch((error) => {
+            let reasonMessage = getReasonMessage(error);
+            console.log("ERROR during vision creation :(", reasonMessage);
+            addAlert(reasonMessage.toString(), 'error');
+        })
         reset();
     };
     return (

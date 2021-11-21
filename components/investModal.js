@@ -9,10 +9,12 @@ import PropTypes from "prop-types";
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import {invest} from "../functions/invest";
 import {Web3Context} from "../pages";
+import useAlert from "../hooks/useAlert";
 
 const InvestModal = ({vision, setVision}) => {
     const {web3, contract} = useContext(Web3Context);
     const {account} = useWeb3React();
+    const {addAlert} = useAlert();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -24,7 +26,7 @@ const InvestModal = ({vision, setVision}) => {
 
     const onSubmit = async (data) => {
         const {investAmount} = data;
-        await invest(web3, contract, vision, account, investAmount, setVision)
+        await invest(web3, contract, vision, account, investAmount, setVision, addAlert);
         setOpen(false);
         reset();
     };
@@ -66,6 +68,7 @@ const InvestModal = ({vision, setVision}) => {
                                 maxLength: 13,
                                 step: "0.001"
                             }}
+                            placeholder={'Ξ'}
                             variant="standard"
                         />
 

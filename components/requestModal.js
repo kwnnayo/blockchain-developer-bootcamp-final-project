@@ -10,11 +10,13 @@ import Vision from "../build/contracts/Vision.json";
 import {Web3Context} from "../pages";
 import {toWei} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
+import {getReasonMessage} from "../functions/getReasonMessage";
+import useAlert from "../hooks/useAlert";
 
 const RequestModal = ({vision, setVision}) => {
     const {web3} = useContext(Web3Context);
     const {account} = useWeb3React();
-
+    const {addAlert} = useAlert();
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -34,10 +36,12 @@ const RequestModal = ({vision, setVision}) => {
         );
         await visionContract.methods.createWithdrawRequest(toWei(withdrawAmount), withdrawReason).send({from: account}).then((resp) => {
             console.log("Made a request!!", resp);
+            addAlert("Withdraw request submitted successfully!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
-            alert("Failed to make a request");
-            console.log("error:(", error)
+            let reasonMessage = getReasonMessage(error);
+            console.log("ERROR in request creation:(", reasonMessage);
+            addAlert(reasonMessage.toString(), 'error');
         });
 
         setOpen(false);

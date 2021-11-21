@@ -10,10 +10,13 @@ import Vision from "../build/contracts/Vision.json";
 import {Web3Context} from "../pages";
 import {toEther} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
+import useAlert from "../hooks/useAlert";
+import {getReasonMessage} from "../functions/getReasonMessage";
 
 const VoteModal = ({vision, setVision}) => {
     const {web3, contract} = useContext(Web3Context);
     const {account} = useWeb3React();
+    const {addAlert} = useAlert();
     const [requests, setRequests] = useState(null);
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -26,7 +29,7 @@ const VoteModal = ({vision, setVision}) => {
         const withdrawReqs = await Promise.all(
             Array(parseInt(vision._idxReq)).fill().map((r, idx) => visionContract.methods.requests(idx).call()));
         setRequests(withdrawReqs);
-        console.log("exw", withdrawReqs);
+        // console.log("exw", withdrawReqs);
     }, [vision]);
 
     const vote = async (idx) => {
@@ -34,12 +37,12 @@ const VoteModal = ({vision, setVision}) => {
         // console.log("preparing for vote for index", idx);
         visionContract.methods.vote(idx).send({from: account}).then((resp) => {
             console.log("Voted!!!!", resp);
+            addAlert("Voted successfully!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
-            alert(
-                `Failed to vote.`,
-            );
-            console.log("ERROR :(", error);
+            let reasonMessage = getReasonMessage(error);
+            console.log("ERROR during voting :(", reasonMessage);
+            addAlert(reasonMessage.toString(), 'error');
         })
     };
 
@@ -48,12 +51,12 @@ const VoteModal = ({vision, setVision}) => {
         // console.log("preparing to withdraw for index", idx);
         visionContract.methods.withdraw(idx).send({from: account}).then((resp) => {
             console.log("Withdraw Success!!!!", resp);
+            addAlert("Amount successfully withdrawn!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
-            alert(
-                `Failed to withdraw.`,
-            );
-            console.log("ERROR :(", error);
+            let reasonMessage = getReasonMessage(error);
+            console.log("ERROR during withdrawal :(", reasonMessage);
+            addAlert(reasonMessage.toString(), 'error');
         })
     };
     

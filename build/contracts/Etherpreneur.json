@@ -23033,12 +23033,12 @@
     "1637407321850": {
       "events": {},
       "links": {},
-      "address": "0xc10288fb56514E358BD0C94046e93F8dF79eecb3",
-      "transactionHash": "0xd054ea8953677a4e54fd91b00c5424c91a82100d0e5090a1fb4d7758edc0e9a6"
+      "address": "0xAceb3C0ca148ca180feF94a4a9e2e073f4fc903b",
+      "transactionHash": "0xd1a70a464bb240c899c94a54ff7b22e41e9eaec89e57f5dd0dc01467dd16e7e2"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-21T18:01:18.460Z",
+  "updatedAt": "2021-11-21T19:21:17.474Z",
   "networkType": "ethereum",
   "devdoc": {
     "author": "K. Koliopoulou",
