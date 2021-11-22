@@ -13,7 +13,7 @@ import useAlert from "../hooks/useAlert";
 import {getReasonMessage} from "../functions/getReasonMessage";
 import useVisionContract from "../hooks/useVisionContract";
 
-const VoteModal = ({vision, setVision}) => {
+const VoteModal = ({vision, setVision, isInvestor}) => {
     const {web3, contract} = useContext(Web3Context);
     const {account} = useWeb3React();
     const {addAlert} = useAlert();
@@ -27,38 +27,31 @@ const VoteModal = ({vision, setVision}) => {
         const withdrawReqs = await Promise.all(
             Array(parseInt(vision._idxReq)).fill().map((r, idx) => visionContract.methods.requests(idx).call()));
         setRequests(withdrawReqs);
-        // console.log("exw", withdrawReqs);
+
     }, [vision]);
 
     const vote = async (idx) => {
-        // console.log("exw ta reqs", requests);
-        // console.log("preparing for vote for index", idx);
         visionContract.methods.vote(idx).send({from: account}).then((resp) => {
-            console.log("Voted!!!!", resp);
             addAlert("Voted successfully!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
-            console.log("exw error", error);
             let reasonMessage = getReasonMessage(error);
-            console.log("ERROR during voting :(", reasonMessage);
-            addAlert(reasonMessage.toString(), 'error');
+            reasonMessage = reasonMessage !== null ? reasonMessage.toString() : "An error occured during voting"
+            addAlert(reasonMessage, 'error');
         })
     };
 
     const withdraw = async (idx) => {
-        // console.log("exw ta reqs", requests);
-        // console.log("preparing to withdraw for index", idx);
-        visionContract.methods.withdraw(idx).send({from: account}).then((resp) => {
-            console.log("Withdraw Success!!!!", resp);
+        await visionContract.methods.withdraw(idx).send({from: account}).then((resp) => {
             addAlert("Amount successfully withdrawn!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
             let reasonMessage = getReasonMessage(error);
-            console.log("ERROR during withdrawal :(", reasonMessage);
-            addAlert(reasonMessage.toString(), 'error');
+            reasonMessage = reasonMessage !== null ? reasonMessage.toString() : "An error occured during withdrawal"
+            addAlert(reasonMessage, 'error');
         })
     };
-    
+
     const canWithdraw = (req) => req.votes >= vision._sumOfInvestors / 2 && !(req.votes !== 1 && vision._sumOfInvestors === 1)
 
     return (
@@ -81,13 +74,17 @@ const VoteModal = ({vision, setVision}) => {
                                     Reason: {req.withdrawalReason}
                                 </Typography>
                                 <Typography variant="body2">
-                                    Num of Votes: {req.votes} Total Investor:{vision._sumOfInvestors} Status: {req.isDone ? 'Completed' : 'Pending'}
+                                    Num of Votes: {req.votes} Total
+                                    Investor:{vision._sumOfInvestors} Status: {req.isDone ? 'Completed' : 'Pending'}
                                 </Typography>
                                 <CardActions>
-                                    <Button size="small" disabled={req.isDone || vision._owner === account} onClick={() => {
-                                        vote(idx)
-                                    }}>Vote</Button>
-                                    <Button size="small" disabled={req.isDone || vision._owner !== account || !canWithdraw(req)}
+                                    <Button size="small"
+                                            disabled={req.isDone || vision._owner === account || !isInvestor}
+                                            onClick={() => {
+                                                vote(idx)
+                                            }}>Vote</Button>
+                                    <Button size="small"
+                                            disabled={req.isDone || vision._owner !== account || !canWithdraw(req)}
                                             onClick={() => {
                                                 withdraw(idx)
                                             }}>Withdraw</Button>
@@ -109,6 +106,7 @@ const VoteModal = ({vision, setVision}) => {
 }
 VoteModal.propTypes = {
     vision: PropTypes.oneOfType([PropTypes.object]),
-    setVision: PropTypes.func
+    setVision: PropTypes.func,
+    isInvestor: PropTypes.bool
 }
 export default VoteModal;

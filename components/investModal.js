@@ -10,6 +10,7 @@ import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/co
 import {invest} from "../functions/invest";
 import {Web3Context} from "../pages";
 import useAlert from "../hooks/useAlert";
+import {toEther} from "../functions/web3Funcs";
 
 const InvestModal = ({vision, setVision}) => {
     const {web3, contract} = useContext(Web3Context);
@@ -66,7 +67,8 @@ const InvestModal = ({vision, setVision}) => {
                             }}
                             inputProps={{
                                 maxLength: 13,
-                                step: "0.001"
+                                step: "0.001",
+                                max: toEther((vision._goal - vision._currentAmount).toString())
                             }}
                             placeholder={'Ξ'}
                             variant="standard"

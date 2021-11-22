@@ -27,20 +27,18 @@ const VisionForm = ({visions, setVisions}) => {
         await contract.methods.createVision(title, description, toWei(amount), days).send({
             from: account
         }).then((response) => {
-            // console.log(response);
             const visionAddress = response.events.NewVisionCreated.returnValues._visionAddress;
             const visionContract = useVisionContract(visionAddress, web3);
 
             visionContract.methods.getVision().call().then((visionData) => {
-                // console.log(visionData);
                 visionData.visionAddress = visionAddress;
                 setVisions([...visions, visionData])
             });
             addAlert("Vision created successfully!", 'success');
         }).catch((error) => {
             let reasonMessage = getReasonMessage(error);
-            console.log("ERROR during vision creation :(", reasonMessage);
-            addAlert(reasonMessage.toString(), 'error');
+            reasonMessage = reasonMessage !== null ? reasonMessage.toString() : "An error occurred during vision creation"
+            addAlert(reasonMessage, 'error');
         })
         reset();
     };

@@ -37,14 +37,14 @@ const RefundModal = ({vision, setVision}) => {
 
     const onSubmit = async (data) => {
         visionContract.methods.withdrawInvestedAmount().send({from: account}).then((resp) => {
-            console.log("Refund Success!!!", resp);
             updateVision(web3, vision, setVision);
             setRefundAmount('0');
             addAlert("You have been successfully refunded!", 'success');
         }).catch((error) => {
             let reasonMessage = getReasonMessage(error);
-            console.log("ERROR in refund :(", reasonMessage);
-            addAlert(reasonMessage.toString(), 'error');
+            reasonMessage = reasonMessage !== null ? reasonMessage.toString() : "An error occured during the withdrawal" +
+                "of invested amount"
+            addAlert(reasonMessage, 'error');
         })
         setOpen(false);
         reset();

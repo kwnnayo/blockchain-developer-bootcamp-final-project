@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import {useForm} from "react-hook-form";
 import PropTypes from "prop-types";
 import {Web3Context} from "../pages";
-import {toWei} from "../functions/web3Funcs";
+import {toEther, toWei} from "../functions/web3Funcs";
 import {updateVision} from "../functions/updateVision";
 import {getReasonMessage} from "../functions/getReasonMessage";
 import useAlert from "../hooks/useAlert";
@@ -33,13 +33,13 @@ const RequestModal = ({vision, setVision}) => {
         const visionContract = useVisionContract(vision.visionAddress, web3);
 
         await visionContract.methods.createWithdrawRequest(toWei(withdrawAmount), withdrawReason).send({from: account}).then((resp) => {
-            console.log("Made a request!!", resp);
             addAlert("Withdraw request submitted successfully!", 'success');
             updateVision(web3, vision, setVision);
         }).catch((error) => {
             let reasonMessage = getReasonMessage(error);
-            console.log("ERROR in request creation:(", reasonMessage);
-            addAlert(reasonMessage.toString(), 'error');
+            reasonMessage = reasonMessage !== null ? reasonMessage.toString() : "An error occurred during the request" +
+                "creation"
+            addAlert(reasonMessage, 'error');
         });
 
         setOpen(false);
@@ -49,6 +49,7 @@ const RequestModal = ({vision, setVision}) => {
     const canRequestWithdraw = () => {
         return vision._owner === account && vision._currentState === '1' && vision._currentAmount > 0;
     }
+
 
     return (
         <>
@@ -81,7 +82,8 @@ const RequestModal = ({vision, setVision}) => {
                             }}
                             inputProps={{
                                 maxLength: 13,
-                                step: "0.001"
+                                step: "0.001",
+                                max: toEther(vision._currentAmount)
                             }}
                             variant="standard"
                         />

@@ -5,7 +5,6 @@ import useVisionContract from "../hooks/useVisionContract";
 
 export const invest = async (web3,contract, vision, account, investAmount, setVision, addAlert) => {
 
-    if (vision._goalAmount - investAmount < 0) return alert('Amounts exceeds goal amount')
     const visionContract = useVisionContract(vision.visionAddress, web3);
 
     visionContract.methods.invest().send({
@@ -17,7 +16,7 @@ export const invest = async (web3,contract, vision, account, investAmount, setVi
         updateVision(web3, vision, setVision);
     }).catch((error) => {
         let reasonMessage = getReasonMessage(error);
-        console.log("ERROR :(", reasonMessage);
-        addAlert(reasonMessage.toString(), 'error');
+        reasonMessage = reasonMessage !== null ? reasonMessage.toString() : "An error occurred during the invest"
+        addAlert(reasonMessage, 'error');
     })
 }

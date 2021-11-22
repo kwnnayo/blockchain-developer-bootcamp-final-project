@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -15,11 +15,23 @@ import {toEther} from "../functions/web3Funcs";
 import RefundModal from "./refundModal";
 import RequestModal from "./requestModal";
 import VoteModal from "./voteModal";
+import useVisionContract from "../hooks/useVisionContract";
+import {Web3Context} from "../pages";
 
 
 const VisionCard = ({data}) => {
     const [vision, setVision] = useState(data);
+    const {web3} = useContext(Web3Context);
+    const [investor, setIsInvestor] = useState(false);
     const {account} = useWeb3React()
+    const visionContract = useVisionContract(vision.visionAddress, web3);
+
+
+    useEffect(async () => {
+        const amount = await visionContract.methods.getInvestorAmount(account).call();
+        setIsInvestor(amount > 0)
+    }, [account]);
+
 
     const hasExpired = () => {
         return moment.unix(vision._deadline) <= now() && vision._currentState !== '1';
@@ -38,7 +50,8 @@ const VisionCard = ({data}) => {
                     <CardHeader
                         title={vision._type}
                         titleTypographyProps={{align: 'center'}}
-                        action={vision._owner === account ? <Chip label="Owned"/> : null}
+                        action={vision._owner === account ? <Chip label="Owned"/> : investor ?
+                            <Chip label="Invested"/> : null}
                     />
                     <Typography sx={{mb: 1.5}} color="text.secondary">
                         {vision._description}
@@ -62,7 +75,7 @@ const VisionCard = ({data}) => {
                         <>
                             <InvestModal vision={vision} setVision={setVision}/>
                             <RequestModal vision={vision} setVision={setVision}/>
-                            <VoteModal vision={vision} setVision={setVision}/>
+                            <VoteModal vision={vision} setVision={setVision} isInvestor={investor}/>
                         </>
                     }
                 </CardActions>
