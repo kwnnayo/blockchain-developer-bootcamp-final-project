@@ -1,9 +1,9 @@
-import Vision from "../build/contracts/Vision.json";
+import Vision from '../build/contracts/Vision.json';
 
-function useVisionContract (address, web3)  {
-    return  new web3.eth.Contract(
-        Vision.abi,
-        address,
+function useVisionContract(address, web3) {
+    return new web3.eth.Contract(
+      Vision.abi,
+      address,
     );
 }
 
