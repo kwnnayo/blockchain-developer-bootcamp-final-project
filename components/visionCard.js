@@ -51,8 +51,8 @@ const VisionCard = ({ data }) => {
             title={vision._type}
             titleTypographyProps={{ align: 'center' }}
             action={vision._owner === account ?
-              <Chip label='Owned' color={'primary'} variant={'outlined'} /> : investor ?
-                <Chip label='Invested' color='secondary' variant={'outlined'} /> : null}
+              <Chip label='Owned' color={'primary'} variant={'outlined'} size={'small'} /> : investor ?
+                <Chip label='Invested' color='secondary' variant={'outlined'} size={'small'} /> : null}
           />
           <Typography sx={{ mb: 1.5 }} color='text.secondary'>
             {vision._description}

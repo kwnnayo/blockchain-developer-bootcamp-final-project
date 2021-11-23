@@ -23,6 +23,6 @@ const VisionCardList = ({ visions }) => (
   </>
 );
 VisionCardList.propTypes = {
-  visions: PropTypes.oneOfType([PropTypes.object]),
+  visions: PropTypes.oneOfType([PropTypes.array]),
 };
 export default VisionCardList;

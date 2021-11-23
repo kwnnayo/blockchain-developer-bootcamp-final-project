@@ -216,6 +216,14 @@ contract Vision is ReentrancyGuard, AccessControl {
         emit WithdrawnSuccess(req.receiver, req.withdrawAmount);
     }
 
+    /// @notice Returns if user has already voted
+    /// @param idx the index of the request
+    /// @dev Created in order to disable Vote button on the FE
+    function hasUserVoted(uint idx, address voter) public view returns (bool) {
+        WithdrawReq storage req = requests[idx];
+        return req.votedInvestors[voter];
+    }
+
     // @notice Get vision data
     function getVision() public view returns
     (
