@@ -2,7 +2,8 @@
 
 ConsenSys Academy Final Project
 
-## EtherPreneur
+## <img src="./public/images/favicon.png" alt="drawing" width="30px"/> EtherPreneur
+
 
 ### Ether donate or not
 
@@ -19,6 +20,7 @@ Other users can invest.</p>
 ### Available Actions
 
 #### Every user
+
 <ul>
     <li>Create a Vision</li>
     <li>Invest to a Vision, as long as he's not the creator of it.</li>
@@ -36,10 +38,83 @@ Other users can invest.</p>
 </ul>
 
 #### Vision Investors
+
 <ul>
     <li>Vote for a Withdrawal Request, if and only if they have invested to its Vision.</li>
     <li>Withdraw their invest amount if the Vision is expired and the amount goal was not met.</li>
 </ul>
 <hr/>
 
-###### Created for the purposes of blockchain developer bootcamp.
+### How to run the project locally
+
+#### 🔌 Prerequisites
+
+<ul>
+<li>npm 8.1.2</li>
+<li>Node.js v16.8.0</li>
+<li>Ganache CLI v6.12.2 </li>
+<li>Truffle v5.4.15 </li>
+<li>Solidity - 0.8.0 (solc-js) </li>
+<li>Web3.js v1.5.3 </li>
+</ul>
+
+#### 🔹 Contract deployment
+
+<ul>
+
+<li> Install truffle and ganache-cli</li>
+
+    npm install -g truffle
+    npm install -g ganache-cli
+
+<li> Create a .env file in the project root directory where you are going to set the deployed contract address:
+
+    ETHERPRENEUR_ADDRESS=YOUR_DEPLOYED_ADDRESS
+
+For Rinkeby network create a new project on Infura and add the following too:
+
+    MNEMONIC="YOUR_RINKEBY_ACCOUNT_MNEMONIC" //account /w Eth is needed
+    INFURA_URL="YOUR_INFURA_URL_ON_RINKEBY"
+
+</li>
+<li>Open a terminal and run
+
+    ganache-cli
+
+</li>
+<li>On another terminal run:
+
+    truffle compile
+    truffle migrate --network development (for ganache) or
+    truffle migrate --network rinkeby (for rinkeby testnet)
+
+</li>
+<li>Get the deployed contract address and fill the .env file.</li>
+
+</ul>
+
+#### 🔹 Frontend deployment
+
+<ul>
+    <li>Clone the project.</li>
+    <li>
+
+    npm install
+
+</li>
+<li>
+
+    npm run dev
+
+</li>
+<li> Open http://localhost:3000/ </li>
+<li>Connect Metamask to the network that contract was deployed and play around :)</li>
+</ul>
+
+### :shipit: Run the tests
+
+    truffle test
+
+<hr/>
+
+###### Created for the purposes of blockchain developer bootcamp.💙
