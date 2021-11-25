@@ -1,20 +1,18 @@
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Dialog, DialogTitle } from '@material-ui/core';
 import { Card, CardActions, CardContent, Grid } from '@mui/material';
 import PropTypes from 'prop-types';
-import { Web3Context } from '../pages';
 import useVisionContract from '../hooks/useVisionContract';
 import RequestCard from './requestCard';
 
 const VoteModal = ({ vision, setVision, isInvestor }) => {
-  const { web3 } = useContext(Web3Context);
   const [requests, setRequests] = useState(null);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const visionContract = useVisionContract(vision.visionAddress, web3);
+  const visionContract = useVisionContract(vision.visionAddress);
 
   useEffect(async () => {
     const withdrawReqs = await Promise.all(

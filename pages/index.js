@@ -18,7 +18,7 @@ import { env } from '../next.config';
 
 export const Web3Context = createContext(null);
 const Index = () => {
-  const { active, account, library, connector, activate, deactivate } = useWeb3React();
+  const { active, account, chainId, connector, activate, deactivate } = useWeb3React();
   const { addAlert } = useAlert();
   const [web3, setWeb3] = useState(null);
   const [contract, setContract] = useState(null);
@@ -60,6 +60,13 @@ const Index = () => {
       if (web3 === null) {
         return;
       }
+      //Use for changing between different networks
+      // const networkId = await web3.eth.net.getId();
+      // const deployedNetwork = Etherpreneur.networks[networkId];
+      // const instance = new web3.eth.Contract(
+      //   Etherpreneur.abi,
+      //   deployedNetwork && deployedNetwork.address,
+      // );
       // Get the contract instance.
       const instance = new web3.eth.Contract(
         Etherpreneur.abi,
@@ -71,7 +78,7 @@ const Index = () => {
       // Catch any errors for any of the above operations.
       addAlert(`Failed to load web3, accounts, or contract. Please check your Metamask account and refresh.`, 'error');
     }
-  }, [web3]);
+  }, [web3, chainId]);
 
   useEffect(async () => {
     contract !== null && await getVisions(web3, contract, setVisions, addAlert);

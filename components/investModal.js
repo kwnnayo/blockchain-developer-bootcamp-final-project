@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useContext } from 'react';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import { useWeb3React } from '@web3-react/core';
@@ -8,19 +7,17 @@ import TextField from '@mui/material/TextField';
 import PropTypes from 'prop-types';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 import { invest } from '../functions/invest';
-import { Web3Context } from '../pages';
 import useAlert from '../hooks/useAlert';
 import { toEther } from '../functions/web3Funcs';
 import useVisionContract from '../hooks/useVisionContract';
 
 const InvestModal = ({ vision, setVision }) => {
-  const { web3, contract } = useContext(Web3Context);
   const { account } = useWeb3React();
   const { addAlert } = useAlert();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const visionContract = useVisionContract(vision.visionAddress, web3);
+  const visionContract = useVisionContract(vision.visionAddress);
   const {
     register,
     handleSubmit,

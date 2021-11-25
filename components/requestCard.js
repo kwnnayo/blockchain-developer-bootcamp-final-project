@@ -3,18 +3,16 @@ import Typography from '@mui/material/Typography';
 import { toEther } from '../functions/web3Funcs';
 import Button from '@mui/material/Button';
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { updateVision } from '../functions/updateVision';
 import { getReasonMessage } from '../functions/getReasonMessage';
 import useVisionContract from '../hooks/useVisionContract';
 import { useWeb3React } from '@web3-react/core';
 import useAlert from '../hooks/useAlert';
-import { Web3Context } from '../pages';
 import PropTypes from 'prop-types';
 
 const RequestCard = ({ req, idx, vision, setVision, isInvestor }) => {
-  const { web3 } = useContext(Web3Context);
-  const visionContract = useVisionContract(vision.visionAddress, web3);
+  const visionContract = useVisionContract(vision.visionAddress);
   const { account } = useWeb3React();
   const { addAlert } = useAlert();
   const [userHasVoted, setUserHasVoted] = useState(false);

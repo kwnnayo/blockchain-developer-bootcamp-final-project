@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import { useWeb3React } from '@web3-react/core';
@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import PropTypes from 'prop-types';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
-import { Web3Context } from '../pages';
 import { updateVision } from '../functions/updateVision';
 import { toEther } from '../functions/web3Funcs';
 import { getReasonMessage } from '../functions/getReasonMessage';
@@ -15,7 +14,6 @@ import useAlert from '../hooks/useAlert';
 import useVisionContract from '../hooks/useVisionContract';
 
 const RefundModal = ({ vision, setVision, isInvestor }) => {
-  const { web3 } = useContext(Web3Context);
   const { account } = useWeb3React();
   const [open, setOpen] = React.useState(false);
   const { addAlert } = useAlert();
@@ -27,7 +25,7 @@ const RefundModal = ({ vision, setVision, isInvestor }) => {
   } = useForm();
 
   const [refundAmount, setRefundAmount] = useState('0');
-  const visionContract = useVisionContract(vision.visionAddress, web3);
+  const visionContract = useVisionContract(vision.visionAddress);
 
   useEffect(() => {
     visionContract.methods.getInvestorAmount(account).call().then((amount) => {

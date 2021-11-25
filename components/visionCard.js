@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -16,15 +16,12 @@ import RefundModal from './refundModal';
 import RequestModal from './requestModal';
 import VoteModal from './voteModal';
 import useVisionContract from '../hooks/useVisionContract';
-import { Web3Context } from '../pages';
-
 
 const VisionCard = ({ data }) => {
   const [vision, setVision] = useState(data);
-  const { web3 } = useContext(Web3Context);
   const [investor, setIsInvestor] = useState(false);
   const { account } = useWeb3React();
-  const visionContract = useVisionContract(vision.visionAddress, web3);
+  const visionContract = useVisionContract(vision.visionAddress);
 
 
   useEffect(async () => {

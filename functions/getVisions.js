@@ -11,7 +11,6 @@ export const getVisions = async (web3, contract, setVisions, addAlert) => {
       Vision.abi,
       visionAddr,
     );
-    ;
 
     vision.methods.getVision().call().then((visionData) => {
       visionData.visionAddress = visionAddr;

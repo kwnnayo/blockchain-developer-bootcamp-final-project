@@ -13,7 +13,7 @@ import { getReasonMessage } from '../functions/getReasonMessage';
 import useVisionContract from '../hooks/useVisionContract';
 
 const VisionForm = ({ visions, setVisions }) => {
-  const { web3, contract } = useContext(Web3Context);
+  const { contract } = useContext(Web3Context);
   const { account } = useWeb3React();
   const { addAlert } = useAlert();
 
@@ -28,7 +28,7 @@ const VisionForm = ({ visions, setVisions }) => {
       from: account,
     }).then((response) => {
       const visionAddress = response.events.NewVisionCreated.returnValues._visionAddress;
-      const visionContract = useVisionContract(visionAddress, web3);
+      const visionContract = useVisionContract(visionAddress);
 
       visionContract.methods.getVision().call().then((visionData) => {
         visionData.visionAddress = visionAddress;
