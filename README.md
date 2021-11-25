@@ -4,7 +4,6 @@ ConsenSys Academy Final Project
 
 ## <img src="./public/images/favicon.png" alt="drawing" width="30px"/> EtherPreneur
 
-
 ### Ether donate or not
 
 <p>An Ethereum based platform where a user (let's call him a Visioner) can post his idea/vision/project for something and define the amount of capital he needs to achieve it.
@@ -113,7 +112,13 @@ For Rinkeby network create a new project on Infura and add the following too:
 
 ### :shipit: Run the tests
 
+For development mode you have to run <b>ganache-cli</b> first and then:
+
     truffle test
+
+For rinkeby:
+
+    truffle test --network rinkeby
 
 <hr/>
 
