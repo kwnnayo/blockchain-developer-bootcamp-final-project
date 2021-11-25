@@ -37,7 +37,7 @@ const RefundModal = ({ vision, setVision, isInvestor }) => {
 
   const onSubmit = async (data) => {
     visionContract.methods.withdrawInvestedAmount().send({ from: account }).then((resp) => {
-      updateVision(web3, vision, setVision);
+      updateVision(vision, setVision, visionContract);
       setRefundAmount('0');
       addAlert('You have been successfully refunded!', 'success');
     }).catch((error) => {

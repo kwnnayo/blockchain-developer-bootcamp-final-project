@@ -30,7 +30,7 @@ const VisionCard = ({ data }) => {
   useEffect(async () => {
     const amount = await visionContract.methods.getInvestorAmount(account).call();
     setIsInvestor(amount > 0);
-  }, [account]);
+  }, [account, vision]);
 
 
   const hasExpired = () => {

@@ -27,7 +27,7 @@ const RequestCard = ({ req, idx, vision, setVision, isInvestor }) => {
   const vote = async (idx) => {
     visionContract.methods.vote(idx).send({ from: account }).then((resp) => {
       addAlert('Voted successfully!', 'success');
-      updateVision(web3, vision, setVision);
+      updateVision(vision, setVision, visionContract);
       setUserHasVoted(true);
     }).catch((error) => {
       let reasonMessage = getReasonMessage(error);
@@ -39,7 +39,7 @@ const RequestCard = ({ req, idx, vision, setVision, isInvestor }) => {
   const withdraw = async (idx) => {
     await visionContract.methods.withdraw(idx).send({ from: account }).then((resp) => {
       addAlert('Amount successfully withdrawn!', 'success');
-      updateVision(web3, vision, setVision);
+      updateVision(vision, setVision, visionContract);
     }).catch((error) => {
       let reasonMessage = getReasonMessage(error);
       reasonMessage = reasonMessage !== null ? reasonMessage.toString() : 'An error occured during withdrawal';
