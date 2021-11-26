@@ -149,8 +149,7 @@ const Index = () => {
 
       </Web3Context.Provider>
     </>
-  )
-    ;
+  );
 };
 
 export default Index;
