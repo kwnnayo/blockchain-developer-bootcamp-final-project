@@ -125,7 +125,7 @@ For rinkeby:
 
 ### Public Address for verification:
 
-<p><b>0xECeD7aF0AdDD3aE61ceb22f9cCe658BF4147394a</b></p>
+<p><b>0x2A6537B676E5124395390050DCefb696b7F5eE29</b></p>
 
 <hr/>
 
