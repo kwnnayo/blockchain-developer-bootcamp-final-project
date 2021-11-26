@@ -122,4 +122,11 @@ For rinkeby:
 
 <hr/>
 
-###### Created for the purposes of blockchain developer bootcamp.💙
+
+### Public Address for verification:
+
+<p><b>0xECeD7aF0AdDD3aE61ceb22f9cCe658BF4147394a</b></p>
+
+<hr/>
+
+###### Created for the purposes of blockchain developer bootcamp 💙
