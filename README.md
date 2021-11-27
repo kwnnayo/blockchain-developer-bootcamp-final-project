@@ -2,7 +2,7 @@
 
 ConsenSys Academy Final Project
 
-## <img src="./public/images/favicon.png" alt="drawing" width="30px"/> EtherPreneur
+## <img src="./public/images/favicon.png" alt="drawing" width="30px"/> <a href="https://etherpreneur.herokuapp.com/"> EtherPreneur </a>
 
 ### Ether donate or not
 
@@ -43,6 +43,8 @@ Other users can invest.</p>
     <li>Withdraw their invest amount if the Vision is expired and the amount goal was not met.</li>
 </ul>
 <hr/>
+
+#### Deployed on heroku: https://etherpreneur.herokuapp.com/
 
 ### How to run the project locally
 
@@ -120,11 +122,12 @@ For rinkeby:
 
     truffle test --network rinkeby
 
-<hr/>
 
 ### 🎥 Walktrhough video:
 
 https://www.loom.com/share/47d450833b074e8fae17f3d202a5c2fa
+
+<hr/>
 
 ### Public Address for verification:
 
