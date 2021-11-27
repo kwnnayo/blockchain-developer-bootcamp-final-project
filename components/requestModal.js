@@ -19,6 +19,7 @@ const RequestModal = ({ vision, setVision }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const visionContract = useVisionContract(vision.visionAddress);
   const {
     register,
     handleSubmit,
@@ -28,7 +29,6 @@ const RequestModal = ({ vision, setVision }) => {
   const onSubmit = async (data) => {
     const { withdrawAmount } = data;
     const { withdrawReason } = data;
-    const visionContract = useVisionContract(vision.visionAddress);
 
     await visionContract.methods.createWithdrawRequest(toWei(withdrawAmount), withdrawReason).send({ from: account }).then((resp) => {
       addAlert('Withdraw request submitted successfully!', 'success');

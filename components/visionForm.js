@@ -10,10 +10,10 @@ import { toWei } from '../functions/web3Funcs';
 import PropTypes from 'prop-types';
 import useAlert from '../hooks/useAlert';
 import { getReasonMessage } from '../functions/getReasonMessage';
-import useVisionContract from '../hooks/useVisionContract';
+import Vision from '../build/contracts/Vision.json';
 
 const VisionForm = ({ visions, setVisions }) => {
-  const { contract } = useContext(Web3Context);
+  const { contract, web3 } = useContext(Web3Context);
   const { account } = useWeb3React();
   const { addAlert } = useAlert();
 
@@ -28,7 +28,10 @@ const VisionForm = ({ visions, setVisions }) => {
       from: account,
     }).then((response) => {
       const visionAddress = response.events.NewVisionCreated.returnValues._visionAddress;
-      const visionContract = useVisionContract(visionAddress);
+      const visionContract = new web3.eth.Contract(
+        Vision.abi,
+        visionAddress,
+      );
 
       visionContract.methods.getVision().call().then((visionData) => {
         visionData.visionAddress = visionAddress;
