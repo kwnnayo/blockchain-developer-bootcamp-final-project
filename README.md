@@ -122,6 +122,9 @@ For rinkeby:
 
 <hr/>
 
+### 🎥 Walktrhough video:
+
+https://www.loom.com/share/47d450833b074e8fae17f3d202a5c2fa
 
 ### Public Address for verification:
 
