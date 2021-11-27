@@ -2,7 +2,7 @@
 
 ConsenSys Academy Final Project
 
-## <img src="./public/images/favicon.png" alt="drawing" width="30px"/> <a href="https://etherpreneur.herokuapp.com/"> EtherPreneur </a>
+## <img src="./public/images/favicon.png" alt="drawing" width="30px"/> <a href="https://etherpreneur.herokuapp.com/">EtherPreneur </a>
 
 ### Ether donate or not
 
