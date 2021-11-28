@@ -1,5 +1,5 @@
 The contract is deployed on the Rinkeby testnet.
-The contract address is being configured on heroku as seen below using the command heroku config:set ETHERPRENEUR_ADDR=0x6b8547352e1486Ab7589885264081B130454d68a --app etherpreneur
+The contract address is being configured on heroku as seen below using the command heroku config:set ETHERPRENEUR_ADDR=0x1c11dAA874f661221Db508B905AC0a9C33Aa3660 --app etherpreneur
 
 The address is:
-ETHERPRENEUR_ADDR: 0x6b8547352e1486Ab7589885264081B130454d68a
+ETHERPRENEUR_ADDR: 0x1c11dAA874f661221Db508B905AC0a9C33Aa3660
