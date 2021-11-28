@@ -46,6 +46,16 @@ Other users can invest.</p>
 
 #### Deployed on heroku: https://etherpreneur.herokuapp.com/
 
+### Project Structure
+
+<ul>
+<li>📁contracts: Holds Etherpreneur contract</li>
+<li>📁pages: Main page</li>
+<li>📁components: The UI components used </li>
+<li>📁functions/hooks/providers: Utility functions used from UI</li>
+<li>📁test: Contract's tests</li>
+</ul>
+
 ### How to run the project locally
 
 #### 🔌 Prerequisites
